@@ -1,0 +1,1541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Prospecting Record Page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: #f3f3f3;
+  --surface: #ffffff;
+  --line: #e5e7eb;
+  --line-2: #dbe0e6;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --muted-2: #9aa3af;
+  --blue: #0176d3;
+  --navy: #032d60;
+  --heading: #122349;
+
+  --radius: 12px;
+  --border-color: #e9ebee;
+  --shadow: 0 1px 0 rgba(0,0,0,.02);
+  --font: "Inter", "Salesforce Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+*{ box-sizing: border-box; }
+body{
+  margin:0;
+  font-weight:400;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+button{ font-family: var(--font); }
+
+.app{ width:100%; padding: 18px 24px 60px 24px; }
+.layout{ display:grid; grid-template-columns:1fr; gap:0; width:100%; }
+.panel{ background:transparent; border:0; border-radius:0; box-shadow:none; overflow:visible; }
+
+/* ---------- RECORD HEADER ---------- */
+.recHeader{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; padding: 4px 4px 10px 4px; background:transparent; border:0;
+}
+.recIdent{ display:flex; align-items:center; gap:15px; min-width:0; }
+.recIcon{
+  width:44px; height:44px; border-radius:50%; flex:0 0 auto;
+  background:#9050e9; display:flex; align-items:center; justify-content:center;
+}
+.recIcon svg{ width:22px; height:22px; color:#fff; }
+.recTitle{
+  font-family:var(--font);
+  font-size:23px; font-weight:400; color:#181818; line-height:1.25;
+  letter-spacing:-.2px;
+  min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.recActions{ display:flex; align-items:center; gap:8px; flex:0 0 auto; }
+.recActions .btn{ border-radius:999px; padding:7px 15px; }
+
+.btn{
+  border:1px solid var(--line-2); background:#fff; color:var(--text);
+  font-size:12.5px; padding:9px 11px; border-radius:8px; cursor:pointer;
+  transition: background .12s ease, border-color .12s ease, transform .08s ease;
+  display:flex; gap:7px; align-items:center; white-space:nowrap;
+}
+.btn:hover{ background:#fafafa; border-color:#cfd6df; }
+.btn:active{ transform: translateY(2px); filter:brightness(.92); }
+.btn svg{ width:14px; height:14px; }
+.slackIcon{ width:15px; height:15px; flex:0 0 auto; }
+.btn.primary{ background:var(--blue); border-color:var(--blue); color:#fff; }
+.btn.primary:hover{ background:#0165b8; border-color:#0165b8; }
+
+/* lead health card */
+.healthRow{ padding: 8px 0 4px; }
+.healthLabel{ font-size:12px; color:#2e333d; margin-bottom:7px; }
+.healthValue{ font-size:19px; color:#181818; font-weight:400; }
+.healthSplit{ display:grid; grid-template-columns:1fr 1fr; gap:14px; padding-top:14px; margin-top:12px; }
+.cmpBarOuter{ height:8px; border-radius:999px; background:#eef0f3; overflow:hidden; }
+.cmpBarInner{ height:100%; border-radius:999px; background:#10b981; width:0%; transition:width .45s cubic-bezier(.4,0,.2,1); }
+.cmpMeta{ font-size:12px; color:var(--muted); margin-top:7px; font-weight:500; }
+
+
+/* ---------- TABBED INFO CARD ---------- */
+.infoTabs{
+  display:flex; gap:26px; padding:14px 24px 0 24px;
+  border-bottom:1px solid #ebedf0; margin-bottom:0;
+}
+.itab{
+  appearance:none; border:0; background:transparent; font-family:var(--font);
+  font-size:15.5px; font-weight:400; color:var(--muted); cursor:pointer;
+  padding:0 0 10px; position:relative;
+}
+.itab[aria-selected="true"]{ color:#181818; }
+.itab[aria-selected="true"]::after{
+  content:""; position:absolute; left:-2px; right:-2px; bottom:-1px; height:2px; background:var(--blue);
+}
+.itab:focus-visible{ outline:2px solid rgba(1,118,211,.25); outline-offset:3px; border-radius:6px; }
+.itab-pane{ display:none; }
+.itab-pane.active{ display:block; }
+
+.secHead{
+  display:flex; align-items:center; gap:9px;
+  width:calc(100% - 48px); margin:16px 24px 0 24px;
+  padding:10px 14px; border:0; border-radius:10px; cursor:pointer;
+  background:#f7f8f9; font-family:var(--font); font-size:15px;
+  font-weight:400; color:#181818; text-align:left;
+  transition:background .12s ease;
+}
+.secHead:hover{ background:#f1f3f5; }
+.secHead svg{ width:13px; height:13px; color:#706e6b; flex:0 0 auto; transition:transform .18s ease; }
+.secHead.collapsed svg{ transform:rotate(-90deg); }
+.secMeta{ margin-left:auto; display:flex; align-items:center; gap:9px; }
+.secActions{ padding:14px 24px 6px 24px; }
+.secBody{ padding:8px 24px 20px 24px; }
+.secBody.flush{ padding:8px 0 8px 0; }
+.secBody.hidden{ display:none; }
+
+.infoGrid{ display:grid; grid-template-columns:1fr 1fr; column-gap:36px; }
+@media (max-width:820px){ .infoGrid{ grid-template-columns:1fr; column-gap:0; } }
+.infoGrid .infoSpan{ grid-column:1 / -1; }
+
+/* ---------- SUBITEM FORM / TOTALS / LINK CHIP ---------- */
+.subForm{ margin:14px 24px 0 24px; padding:16px 18px; border-radius:12px; background:#f7f8f9; }
+.subForm[hidden]{ display:none; }
+.subFormHead{ font-size:14px; color:#181818; margin-bottom:12px; }
+.subFormGrid{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px 16px; }
+@media (max-width:820px){ .subFormGrid{ grid-template-columns:1fr 1fr; } }
+.subField{ display:flex; flex-direction:column; gap:5px; min-width:0; }
+.subField.wide{ grid-column:span 2; }
+@media (max-width:820px){ .subField.wide{ grid-column:span 2; } }
+.subField > span{ font-size:12px; color:#2e333d; display:flex; gap:6px; align-items:center; }
+.subField em{ font-style:normal; font-size:10.5px; color:#b45309; background:#fef3c7; padding:1px 6px; border-radius:4px; }
+.subField .inline-input{ background:#fff; }
+.subField .inline-input.invalid{ border-color:#dc2626; box-shadow:0 0 0 1px #dc2626; }
+.subField .pickTrigger{ background:#fff; border-color:var(--line-2); min-width:0; width:100%; }
+.subFormFoot{ display:flex; align-items:center; gap:10px; margin-top:14px; }
+.subHint{ font-size:12px; color:var(--muted); margin-right:auto; }
+.subHint.bad{ color:#b91c1c; }
+
+.heirTotals{ padding:12px 24px 0 24px; font-size:12.5px; line-height:1.5; }
+.heirTotals.ok{ color:#0a5c3c; }
+.heirTotals.warn{ color:#b45309; }
+
+.linkChip{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:24px; height:24px; flex:0 0 auto; margin-left:2px;
+  border:0; border-radius:6px; background:transparent; cursor:pointer;
+  color:#c4c9d4; transition:color .12s ease, background .12s ease;
+}
+.linkChip.has{ color:var(--blue); }
+.linkChip:hover{ background:rgba(0,0,0,.05); color:#0b5cab; }
+.linkChip svg{ width:14px; height:14px; }
+.linkEditor{ padding:6px 0 4px; }
+
+/* ---------- PICKLIST DROPDOWN ---------- */
+.pickTrigger{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  width:100%; min-width:0; font-family:var(--font); font-size:15px; font-weight:400;
+  color:#080707; background:transparent; border:1px solid transparent;
+  border-radius:8px; padding:5px 8px; margin:-5px -8px; cursor:pointer; text-align:left;
+  transition:border-color .12s ease, background .12s ease, box-shadow .12s ease;
+}
+.pickTrigger:hover{ border-color:var(--line-2); background:#fff; }
+.pickTrigger[aria-expanded="true"]{
+  border-color:var(--blue); background:#fff; box-shadow:0 0 0 1px var(--blue);
+}
+.pickTrigger.empty .pickValue{ color:#9ca3af; font-style:italic; }
+.pickValue{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pickCaret{ width:11px; height:11px; color:#706e6b; flex:0 0 auto; transition:transform .16s ease; }
+.pickTrigger[aria-expanded="true"] .pickCaret{ transform:rotate(180deg); }
+
+/* compact variant used inside the heirs table */
+.pickTrigger.compact{
+  font-size:13px; padding:5px 7px; margin:0; min-width:140px;
+  border-radius:6px;
+}
+.pickTrigger.compact.narrow{ min-width:88px; }
+
+.pickPanel{
+  position:fixed; z-index:2000; background:#fff; border-radius:10px;
+  box-shadow:0 6px 24px rgba(16,24,40,.16), 0 0 0 1px rgba(16,24,40,.06);
+  padding:0 0 6px 0; overflow:hidden auto; max-height:min(340px, 60vh);
+  font-family:var(--font);
+}
+.pickHead{
+  font-size:13px; font-weight:500; color:#0b5cab;
+  padding:12px 16px 10px 16px; border-bottom:1px solid #ebedf0; margin-bottom:4px;
+  position:sticky; top:0; background:#fff;
+}
+.pickOpt{
+  display:flex; align-items:center; gap:9px; width:100%;
+  font-family:var(--font); font-size:14px; font-weight:400; color:#181818;
+  background:transparent; border:0; text-align:left; cursor:pointer;
+  padding:9px 16px 9px 28px;
+  transition:background .1s ease;
+}
+.pickOpt:hover{ background:#f3f3f3; }
+.pickOpt.selected{ color:#0b5cab; }
+.pickOpt .pickCheck{ position:absolute; left:9px; width:13px; height:13px; }
+.pickOptWrap{ position:relative; display:flex; }
+
+/* ---------- CONTENT ---------- */
+.tab-content{ padding:7px 0 0; }
+.tab-pane{ display:block; }
+
+/* ---------- STAGE PATH ---------- */
+.pathWrap{ padding: 18px 24px 6px 24px; display:flex; align-items:center; gap:12px; }
+.pathStack{ flex:1; min-width:0; }
+.pathGroups{ display:flex; margin-bottom:7px; }
+.pathGroup{
+  min-width:0; padding:0 2px 5px 2px; position:relative;
+  font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--muted-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.pathGroup::after{
+  content:""; position:absolute; left:2px; right:8px; bottom:0; height:1px; background:#e2e5e9;
+}
+.pathGroup.active{ color:#0d1f6e; }
+.pathGroup.active::after{ background:#0d1f6e; }
+.pathCollapse{
+  width:26px; height:26px; border-radius:50%; border:1px solid var(--line-2);
+  background:#fff; color:#514f4d; cursor:pointer; flex:0 0 auto;
+  display:flex; align-items:center; justify-content:center; transition:background .12s ease;
+}
+.pathCollapse:hover{ background:#f3f4f6; }
+.pathCollapse svg{ width:13px; height:13px; transition:transform .2s ease; }
+.pathWrap.collapsed .pathCollapse svg{ transform:rotate(-90deg); }
+
+.path{ display:flex; flex:1; min-width:0; }
+.pathItem{
+  font-family:var(--font);
+  flex:1; min-width:0; height:34px; border:0; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  font-size:12.5px; font-weight:400; letter-spacing:.01em;
+  background:#e5e5e5; color:#514f4d; margin-right:0;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%);
+  padding: 0 6px 0 12px;
+  margin-left:-7px;
+  transition: background .16s ease, color .16s ease;
+  white-space:nowrap; overflow:hidden;
+}
+.pathItem:first-child{ clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%); padding-left:16px; margin-left:0; border-radius:999px 0 0 999px; }
+.pathItem:last-child{ margin-right:0; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%); border-radius:0 999px 999px 0; }
+.pathItem:hover{ background:#dedcda; }
+.pathItem.done{ background:#a5e8cf; color:#0a5c3c; }
+.pathItem.done:hover{ background:#b0e0c8; }
+.pathItem.current{ background:#0d1f6e; color:#fff; }
+.pathItem.current:hover{ background:#081c58; }
+.pathItem svg{ width:12px; height:12px; flex:0 0 auto; }
+.pathLabel{ overflow:hidden; text-overflow:ellipsis; }
+.pathSub{ font-size:10.5px; font-weight:500; opacity:.75; }
+
+/* ---------- 3-COLUMN RECORD GRID ---------- */
+.recGrid{
+  display:grid;
+  grid-template-columns: minmax(240px,0.55fr) minmax(0,1.45fr);
+  gap:16px;
+  padding: 0 0 24px 0;
+  align-items:start;
+}
+@media (max-width:900px){ .recGrid{ grid-template-columns:1fr; } }
+.colStack{ display:flex; flex-direction:column; gap:16px; min-width:0; }
+
+.card{
+  background:#fff; border:0; border-radius:14px;
+  box-shadow:0 1px 3px rgba(16,24,40,.06); overflow:hidden;
+}
+.cardHead{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:20px 24px 8px 24px; border:0;
+}
+.cardHead h3{ margin:0; font-family:var(--font); font-size:19.5px; font-weight:400; color:#181818; letter-spacing:-.15px; }
+.cardHead .meta{ font-size:12px; color:var(--muted); font-weight:500; }
+.cardBody{ padding: 4px 24px 20px 24px; }
+.cardBody.flush{ padding:0 0 8px 0; }
+
+.cardTitle{
+  font-family:var(--font); font-size:19.5px; font-weight:400;
+  color:#181818; letter-spacing:-.15px; line-height:1.3;
+}
+
+/* ---------- SLDS FIELD ROWS ---------- */
+.slds-field{
+  display:flex; flex-direction:column; padding:10px 0 4px 0;
+  border-bottom:1px solid #ebedf0; min-width:0;
+}
+.slds-field:last-child{ border-bottom:1px solid #ebedf0; }
+.slds-label{
+  font-size:12px; font-weight:400; color:#2e333d; line-height:1.3;
+  margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  display:flex; align-items:center; gap:5px;
+}
+.slds-value{ display:flex; align-items:center; justify-content:space-between; gap:6px; min-width:0; }
+.value-text{
+  font-size:15px; color:#080707; font-weight:400; line-height:1.4; min-width:0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.value-text.multiline{ white-space:normal; }
+.value-text.link{ color:var(--blue); cursor:pointer; }
+.value-text.link:hover{ text-decoration:underline; }
+.value-text.empty{ color:#9ca3af; font-style:italic; }
+.edit{
+  opacity:.55; transition:opacity .1s ease, color .1s ease, background .1s ease;
+  color:#c4c9d4; cursor:pointer; flex:0 0 auto; display:flex; align-items:center;
+  padding:2px 3px; border-radius:4px;
+}
+.slds-field:hover .edit{ opacity:1; }
+.edit{ color:#0b5cab; }
+.edit:hover{ color:#686D73; background:rgba(0,0,0,.04); }
+.edit svg{ width:16px; height:16px; display:block; }
+.inline-input{
+  width:100%; font-family:var(--font); font-size:15px; padding:6px 10px;
+  border:1px solid #b9bdc4; border-radius:8px; outline:none;
+}
+.inline-input:focus{ border-color:var(--navy); box-shadow:0 0 0 1px var(--navy); }
+
+.reqDot{
+  width:5px; height:5px; border-radius:50%; background:#dc2626; flex:0 0 auto;
+}
+
+/* ---------- STATUS PILLS ---------- */
+.pill{
+  display:inline-flex; align-items:center; gap:5px; border-radius:999px;
+  padding:2px 9px; font-size:11.5px; font-weight:400; white-space:nowrap;
+}
+.pill .dot{ width:6px; height:6px; border-radius:50%; flex:0 0 auto; }
+.pill.green{ background:#d1fae5; color:#065f46; } .pill.green .dot{ background:#10b981; }
+.pill.blue{ background:#dbeafe; color:#1e40af; }  .pill.blue .dot{ background:#3b82f6; }
+.pill.amber{ background:#fef3c7; color:#92400e; } .pill.amber .dot{ background:#f59e0b; }
+.pill.red{ background:#fee2e2; color:#991b1b; }   .pill.red .dot{ background:#ef4444; }
+.pill.indigo{ background:#e0e7ff; color:#3730a3; }.pill.indigo .dot{ background:#6366f1; }
+.pill.gray{ background:#f1f3f5; color:#4b5563; }  .pill.gray .dot{ background:#9ca3af; }
+
+/* ---------- GUIDANCE PANEL ---------- */
+.guidHead{
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  padding:12px 24px 6px 24px;
+}
+.guidStatus{ font-size:19px; font-weight:400; color:#181818; letter-spacing:-.2px; }
+.guidStatus span{ color:#181818; font-weight:400; }
+.guidStage{ font-size:12.5px; color:var(--muted); margin-top:5px; padding:0 24px 4px; }
+.guidBody{ padding:6px 24px 20px 24px; display:grid; grid-template-columns:1fr 1fr; gap:0 32px; align-items:start; }
+@media (max-width:900px){ .guidBody{ grid-template-columns:1fr; } }
+.btnStage{
+  border:0; background:var(--blue); color:#fff; font-family:var(--font);
+  font-size:13.5px; font-weight:500; padding:9px 20px; border-radius:999px;
+  cursor:pointer; display:flex; align-items:center; gap:8px; white-space:nowrap;
+  transition:background .12s ease, transform .08s ease;
+}
+.btnStage:hover{ background:#0165b8; }
+.guidActions{ display:flex; align-items:center; gap:9px; flex:0 0 auto; }
+.btnBlock{
+  border:1px solid var(--line-2); background:#fff; color:#6b7280;
+  font-family:var(--font); font-size:13px; font-weight:400;
+  padding:8px 15px; border-radius:999px; cursor:pointer;
+  transition:background .12s ease, color .12s ease, border-color .12s ease;
+}
+.btnBlock:hover{ background:#fdf3f3; border-color:#f0c9c9; color:#b91c1c; }
+.btnBlock.on{ background:#fee2e2; border-color:#fca5a5; color:#991b1b; }
+.blockBanner[hidden]{ display:none; }
+.blockBanner{
+  display:flex; align-items:flex-start; gap:9px;
+  margin:8px 24px 0 24px; padding:11px 14px; border-radius:10px;
+  background:#fef2f2; color:#991b1b; font-size:13px; line-height:1.5;
+}
+.blockBanner strong{ font-weight:500; }
+.blockBanner .clearBlock{
+  margin-left:auto; background:none; border:0; color:#991b1b; cursor:pointer;
+  font-family:var(--font); font-size:12.5px; text-decoration:underline; white-space:nowrap;
+}
+.pathItem.blocked{ background:#fca5a5 !important; color:#7f1d1d !important; }
+.btnStage:active{ transform:translateY(1px); }
+.btnStage svg{ width:14px; height:14px; }
+.guidLabel{
+  font-size:14px; letter-spacing:0; text-transform:none;
+  color:#181818; font-weight:400; margin: 6px 0 12px;
+}
+.guidList{ margin:0; padding:0 0 10px 0; list-style:none; }
+.guidList li{
+  font-size:13.5px; color:#374151; line-height:1.55; padding:0 0 7px 16px;
+  position:relative;
+}
+.guidList li::before{
+  content:"\2013"; position:absolute; left:1px; top:-1px;
+  color:#9aa3af; font-size:13px;
+}
+
+/* requirements to advance */
+.reqGrid{ display:grid; grid-template-columns:1fr; gap:9px; padding-bottom:4px; }
+@media (max-width:640px){ .reqGrid{ grid-template-columns:1fr; } }
+.reqItem{ display:flex; align-items:center; gap:8px; font-size:13px; }
+.reqIcon{ width:15px; height:15px; flex:0 0 auto; }
+.reqItem.met{ color:#065f46; }
+.reqItem.unmet{ color:#8b1a1a; }
+.reqItem.na{ color:#9aa3af; }
+.reqItem{ align-items:flex-start; }
+.reqItem .reqName{ flex:0 0 auto; }
+.reqNote{ font-size:11.5px; color:#9aa3af; margin-left:6px; line-height:1.5; }
+.reqItem.na .reqName{ text-decoration:line-through; text-decoration-color:#d5d9de; }
+.reqItem .reqName{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.guidFoot{
+  display:flex; align-items:center; gap:12px;
+  padding:0 24px 18px 24px; border:0; background:transparent;
+}
+.guidFootNote{ font-size:12px; color:var(--muted); }
+
+/* ---------- SOURCE LINKS ---------- */
+.linkRow{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:10px 22px; border-bottom:1px solid #f4f5f7;
+}
+.linkRow:last-child{ border-bottom:0; }
+.linkLeft{ display:flex; align-items:center; gap:9px; min-width:0; }
+.linkStatus{ width:7px; height:7px; border-radius:50%; flex:0 0 auto; }
+.linkStatus.have{ background:#10b981; }
+.linkStatus.missing{ background:#d1d5db; }
+.linkName{ font-size:13.5px; color:#374151; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.linkAction{
+  font-size:12.5px; color:var(--blue); cursor:pointer; background:none; border:0;
+  padding:2px 4px; border-radius:4px; white-space:nowrap;
+}
+.linkAction:hover{ text-decoration:underline; }
+.linkAction.add{ color:var(--muted); }
+
+/* ---------- DATA TABLE (heirs) ---------- */
+.rct-scroll{ width:100%; overflow-x:auto; }
+.rct-scroll::-webkit-scrollbar{ height:9px; }
+.rct-scroll::-webkit-scrollbar-thumb{ background:#d6dae0; border-radius:999px; }
+.rct-table .colName{ min-width:190px; }
+.rct-table .colAddr{ min-width:230px; }
+.cellEmpty{ color:#9ca3af; font-style:italic; }
+.cellInput.nameCell{ color:var(--blue); }
+.cellInput{
+  font-family:var(--font); font-size:13px; color:#181818;
+  border:1px solid transparent; background:transparent; border-radius:6px;
+  padding:5px 7px; width:100%; min-width:120px;
+  transition:border-color .12s ease, background .12s ease;
+}
+.cellInput.pctCell{ min-width:76px; }
+.cellInput::placeholder{ color:#b6bcc4; font-style:italic; }
+.cellInput:hover{ border-color:var(--line-2); background:#fff; }
+.cellInput:focus{ outline:none; border-color:var(--navy); background:#fff; }
+.btnSub{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font); font-size:13.5px; font-weight:400; color:var(--blue);
+  background:#eef5fd; border:0; border-radius:999px; padding:9px 18px 9px 15px;
+  cursor:pointer; transition:background .12s ease, transform .08s ease;
+}
+.btnSub:hover{ background:#e1edfb; }
+.btnSub:active{ transform:translateY(1px); }
+.btnSub svg{ width:15px; height:15px; }
+.rct-table{
+  width:100%; border-collapse:collapse; font-family:var(--font); font-size:13px; color:#181818;
+  table-layout:auto; white-space:nowrap;
+}
+.rct-table thead th{
+  background:#f3f3f3; color:#444; font-weight:500; font-size:13px;
+  text-align:left; padding:0 12px; height:34px;
+  border-bottom:1px solid #e5e5e5; border-top:1px solid #e5e5e5;
+}
+.rct-table tbody td{
+  padding:0 12px; height:46px; border-bottom:1px solid #e5e5e5;
+  vertical-align:middle; background:#fff; transition:background .08s;
+}
+.rct-row{ cursor:pointer; }
+.rct-row:hover td{ background:#f3f3f3; }
+.rct-link{ color:var(--blue); text-decoration:none; }
+.rct-row:hover .rct-link{ text-decoration:underline; }
+
+.emptyState{ padding:22px 16px; font-size:13.5px; color:#9ca3af; font-style:italic; }
+
+/* ---------- TOAST ---------- */
+#toast{
+  position:fixed; right:22px; bottom:26px; z-index:9999;
+  background:#0a5c3c; color:#fff; font-size:13.5px; font-weight:500;
+  padding:11px 16px; border-radius:9px; box-shadow:0 6px 22px rgba(0,0,0,.18);
+  opacity:0; transform:translateY(8px); pointer-events:none;
+  transition:opacity .2s ease, transform .2s ease;
+}
+#toast.show{ opacity:1; transform:translateY(0); }
+#toast.err{ background:#8b1a1a; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ transition-duration:.01ms !important; animation-duration:.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+<div class="layout">
+<div class="panel">
+
+  <!-- ═══ RECORD HEADER ═══ -->
+  <div class="recHeader">
+    <div class="recIdent">
+      <div class="recIcon">
+        <svg viewBox="0 0 520 520" fill="currentColor"><path d="M460 90H60c-27 0-50 22-50 50v240c0 27 23 50 50 50h400c28 0 50-22 50-50V140c0-28-22-50-50-50zM248 372H104c-16 0-28-17-28-34 1-25 27-40 54-52 19-8 22-16 22-24s-5-16-12-22a55 55 0 0 1-17-41c0-32 19-58 52-58s52 27 52 58c0 17-6 32-17 41-7 6-12 13-12 22 0 8 2 16 22 23 27 12 53 28 54 53 3 17-10 34-26 34zm195-58c0 9-8 17-17 17h-75c-9 0-17-7-17-17v-25c0-9 8-17 17-17h75c9 0 17 7 17 17zm0-91c0 9-8 17-17 17H302c-9 0-17-7-17-17v-25c0-9 8-17 17-17h125c9 0 17 7 17 17v25z"/></svg>
+      </div>
+      <div class="recTitle" id="hdrAddress">&mdash;</div>
+    </div>
+    <div class="recActions">
+      <button class="btn" id="btnRefresh" type="button"><span aria-hidden="true">⟳</span>Refresh</button>
+      <button class="btn" type="button" onclick="toast('Escalated to Slack')"><svg class="slackIcon" viewBox="0 0 122.8 122.8" aria-hidden="true"><path fill="#E01E5A" d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9z"/><path fill="#E01E5A" d="M32.3 77.6c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z"/><path fill="#36C5F0" d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2z"/><path fill="#36C5F0" d="M45.2 32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9h32.3z"/><path fill="#2EB67D" d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V45.2z"/><path fill="#2EB67D" d="M90.5 45.2c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v32.3z"/><path fill="#ECB22E" d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9z"/><path fill="#ECB22E" d="M77.6 90.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z"/></svg>Escalate to Slack</button>
+    </div>
+  </div>
+
+  <div class="tab-content">
+
+    <!-- ══════════ PANE: LEAD DETAILS ══════════ -->
+    <div class="tab-pane active" id="pane-lead" role="tabpanel">
+
+      <div class="recGrid">
+
+        <!-- ───── LEFT COLUMN ───── -->
+        <div class="colStack">
+          <div class="card" id="cardAbout">
+            <div class="cardHead">
+              <span class="cardTitle">About</span>
+            </div>
+            <div class="cardBody" id="aboutFields"></div>
+          </div>
+
+          <div class="card" id="cardProperty">
+            <div class="cardHead">
+              <span class="cardTitle">Property Profile</span>
+            </div>
+            <div class="cardBody" id="propertyFields"></div>
+          </div>
+
+        </div>
+
+        <!-- ───── CENTER COLUMN ───── -->
+        <div class="colStack">
+
+          <!-- Guidance -->
+          <div class="card" id="cardGuidance">
+      <div class="pathWrap" id="pathWrap">
+        <button class="pathCollapse" id="pathCollapseBtn" type="button" aria-label="Collapse guidance">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+        </button>
+        <div class="pathStack">
+          <div class="pathGroups" id="pathGroups" aria-hidden="true"></div>
+          <div class="path" id="path" role="tablist" aria-label="Lead status"></div>
+        </div>
+      </div>
+            <div class="guidHead" id="guidHead">
+              <div>
+                <div class="guidStatus">Status: <span id="guidStatusName">&mdash;</span></div>
+              </div>
+              <div class="guidActions">
+                <button class="btnBlock" type="button" id="btnBlock">Flag blocked</button>
+              <button class="btnStage" type="button" id="btnAdvance">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                <span id="btnAdvanceLabel">Mark Status as Complete</span>
+              </button>
+              </div>
+            </div>
+            <div class="blockBanner" id="blockBanner" hidden></div>
+            <div class="guidStage" id="guidStageMeta">&mdash;</div>
+            <div class="guidBody" id="guidBody">
+              <div>
+                <div class="guidLabel">Requirements to Advance</div>
+                <div class="reqGrid" id="reqGrid"></div>
+                <div class="guidFoot" id="guidFoot" style="padding-left:0;padding-right:0;">
+                  <div class="guidFootNote" id="guidFootNote">&mdash;</div>
+                </div>
+              </div>
+              <div>
+                <div class="guidLabel">Guidance for Success</div>
+                <ul class="guidList" id="guidList"></ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Details / Checklist / History -->
+          <div class="card" id="cardInfo">
+            <div class="infoTabs" role="tablist">
+              <button class="itab" type="button" role="tab" aria-selected="true"  data-itab="itab-details">Details</button>
+              <button class="itab" type="button" role="tab" aria-selected="false" data-itab="itab-heirs">Heirs</button>
+            </div>
+
+            <div class="itab-pane active" id="itab-details">
+              <button class="secHead" type="button" data-section="secDetails">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                <span>Prospecting Information</span>
+              </button>
+              <div class="secBody" id="secDetails">
+                <div class="infoGrid" id="infoFields"></div>
+              </div>
+            </div>
+
+            <div class="itab-pane" id="itab-heirs">
+              <div class="secBody flush" id="secHeirs">
+                <div class="rct-scroll"><table class="rct-table" id="heirTable"></table></div>
+                <div class="heirTotals" id="heirTotals"></div>
+                <div class="subForm" id="subForm" hidden>
+                  <div class="subFormHead">New subitem</div>
+                  <div class="subFormGrid">
+                    <label class="subField wide">
+                      <span>Name <em>required</em></span>
+                      <input class="inline-input" id="subName" placeholder="Full legal name of the heir" />
+                    </label>
+                    <div class="subField">
+                      <span>Relationship</span>
+                      <div id="subRelWrap"></div>
+                    </div>
+                    <div class="subField">
+                      <span>Owner</span>
+                      <div id="subOwnerWrap"></div>
+                    </div>
+                    <label class="subField">
+                      <span>Ownership %</span>
+                      <input class="inline-input" id="subPct" placeholder="e.g. 33.3" />
+                    </label>
+                    <label class="subField wide">
+                      <span>Address</span>
+                      <input class="inline-input" id="subAddr" placeholder="Mailing address" />
+                    </label>
+                    <label class="subField">
+                      <span>Phone 1</span>
+                      <input class="inline-input" id="subPhone" placeholder="Primary number" />
+                    </label>
+                  </div>
+                  <div class="subFormFoot">
+                    <span class="subHint" id="subHint">Everything except the name can be filled in later.</span>
+                    <button class="btn" type="button" id="btnSubCancel">Cancel</button>
+                    <button class="btnStage" type="button" id="btnSubCreate">Create subitem</button>
+                  </div>
+                </div>
+                <div class="secActions">
+                  <button class="btnSub" type="button" id="btnAddSub">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Add Subitem
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /.tab-content -->
+</div><!-- /.panel -->
+</div><!-- /.layout -->
+</div><!-- /.app -->
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   RECORD DATA  — placeholder values, edit inline to test
+   ══════════════════════════════════════════════════════════ */
+const DATA = {
+  property_address: "4418 Beechnut St",
+  city: "Houston",
+  zip: "77096",
+  county: "Harris",
+  ownership_type: "",
+  date_added: "07/28/2026",
+  days_in_stage: "6 days",
+
+  deceased_owner: "Marguerite A. Delacroix",
+  date_of_birth: "",
+  date_of_death: "03/14/2023",
+  age_at_death: "81",
+
+  deed_status: "Deed Found",
+  deed_recorded: "06/02/1998",
+  will_status: "Will Not Found",
+  probate_status: "Not Filed",
+  probate_case_no: "",
+  tax_lawsuit_status: "Taxes Under Suit",
+  lawsuit_case_no: "",
+  ancestry_status: "In Progress",
+  obituary_status: "Located",
+
+  tax_status: "Delinquent — 2 yrs",
+  taxes_owed: "$11,480",
+  equity: "$184,000",
+  est_value: "$237,000",
+  condition: "Deferred Maintenance",
+  occupancy: "Vacant",
+  title_issue: "",
+
+  fact_pattern_notes: ""
+};
+
+const LINKS = {
+  deed_link:         { label: "Deed",            url: "https://recorder.hctx.net/rec/0721340000012" },
+  will_link:         { label: "Will",            url: "" },
+  probate_link:      { label: "Probate Case",    url: "" },
+  lawsuit_link:      { label: "Tax Lawsuit",     url: "" },
+  obituary_link:     { label: "Obituary",        url: "https://legacy.example.com/obit/delacroix" },
+  ancestry_link:     { label: "Ancestry Tree",   url: "https://ancestry.example.com/tree/88213" },
+  tax_assessor_link: { label: "Tax Assessor",    url: "https://hcad.example.org/parcel/0721340000012" },
+  zillow_link:       { label: "Zillow",          url: "https://zillow.example.com/homes/4418-beechnut" },
+  maps_link:         { label: "Google Maps",     url: "" }
+};
+
+const RELATIONSHIPS = ["Spouse","Surviving spouse","Predeceased spouse","Son","Daughter","Stepchild",
+  "Grandson","Granddaughter","Brother","Sister","Half-brother","Half-sister",
+  "Nephew","Niece","Cousin","Parent","Executor","Trustee","Unknown"];
+const OWNER_STATUSES = ["Yes","No"];
+
+const HEIRS = [
+  { name:"Daniel R. Delacroix",    rel:"Son",                owner:"Yes", pct:"33.3%",
+    addr:"8802 Kirkwood Dr, Houston, TX 77099",
+    p1:"(713) 555-0142", p2:"(281) 555-9930", p3:"", p4:"" },
+  { name:"Yvette Delacroix-Hart",  rel:"Daughter",           owner:"Yes", pct:"33.3%",
+    addr:"1140 Live Oak Ln, Katy, TX 77494",
+    p1:"", p2:"", p3:"", p4:"" },
+  { name:"Carl Whitfield",         rel:"Nephew",             owner:"No",  pct:"",
+    addr:"",
+    p1:"", p2:"", p3:"", p4:"" },
+  { name:"Estate of R. Delacroix", rel:"Predeceased spouse", owner:"No",  pct:"",
+    addr:"",
+    p1:"", p2:"", p3:"", p4:"" }
+];
+
+
+/* ══════════════════════════════════════════════════════════
+   STAGE DEFINITIONS — hardcoded guidance, checklist, gates
+   ══════════════════════════════════════════════════════════ */
+const GROUPS = {
+  intake:    "New Leads to be Completed",
+  genealogy: "Genealogy Due Diligence",
+  done:      "Completed — Ready to be Assigned"
+};
+
+const STAGES = [
+  {
+    name: "Needs Enrichment",
+    group: "intake", owner: "VA 1",
+    short: "Fill the gaps the county list left behind.",
+    guidance: [
+      "County lists arrive with city and ZIP missing more often than not. Fill both before anything else."
+    ],
+    requires: ["property_address","city","zip","county","deceased_owner"],
+    reminders: [
+      { type:"stop", title:"No records yet", body:"Pulling a deed on a living owner wastes a fee and an hour. Confirm the death, then move to Records Polling." },
+      { type:"info", title:"Duplicate check by address", body:"Search by street address, not owner name — heirs often share a surname with the decedent." }
+    ]
+  },
+  {
+    name: "Records Polling",
+    group: "intake", owner: "VA 1",
+    short: "Pull every document and draft the transfer history.",
+    guidance: [
+      "Read the vesting language before anything else. Sole owner, joint tenancy with survivorship, and trust are three different files — and one of them may have no estate to chase at all.",
+      "Grab every adjacent document while you are already in the portal: prior deeds, liens, affidavits, releases. Going back for one document later costs more than pulling five now.",
+      "The transfer history you write in Updates is the real deliverable. Write it so the next VA and the closer can follow how title moved without reopening a single document. Nothing on this widget tracks it — the write-up is the only record of your reasoning."
+    ],
+    requires: ["deed_status","deed_link","will_status","obituary_link","tax_lawsuit_status","probate_status","ownership_type"],
+    conditional: [
+      { key:"lawsuit_case_no",
+        when: () => SUIT_VALUES.includes(DATA.tax_lawsuit_status),
+        why:  "Required because the taxes are under suit.",
+        na:   "Not required — no tax suit on this property." },
+      { key:"probate_case_no",
+        when: () => DATA.will_status === "Will Found",
+        why:  "Required because a will was found.",
+        na:   "Not required — no will found, so no case to reference." }
+    ],
+    reminders: [
+      { type:"stop", title:"Transfer history is not optional", body:"The deed link alone does not hand off. VA 2 reads the Updates write-up to understand how title moved before she opens Ancestry." },
+      { type:"warn", title:"Recorder portals lag", body:"County postings can run 5–10 business days behind. Mark Deed Not Found only after checking twice." },
+      { type:"info", title:"Case numbers are conditional", body:"The lawsuit case number is only demanded when taxes are under suit, and the probate case number only when a will was found. The requirement list updates itself as you set those two fields." }
+    ]
+  },
+  {
+    name: "Decedent Research",
+    group: "genealogy", owner: "VA 2",
+    short: "Establish who the decedent was before mapping who survives them.",
+    guidance: [
+      "Read VA 1's transfer history in Updates before opening Ancestry. It tells you whether a tree is worth building — if a joint tenant survived, title already passed and this file should be flagged, not researched.",
+      "Match on date of birth and last known city, never on name alone. A common surname in a large county will hand you a convincing wrong person, and every hour after that is spent mapping a stranger's family."
+    ],
+    requires: ["date_of_birth","date_of_death","age_at_death","ancestry_link"],
+    reminders: [
+      { type:"warn", title:"Check vesting before you build", body:"If a joint tenant survived, title already passed. Stop and flag it rather than mapping a tree nobody needs." },
+      { type:"info", title:"Verify identity, not just the name", body:"Cross-check DOB and last known city against the deed before trusting an Ancestry match." }
+    ]
+  },
+  {
+    name: "Tree Build",
+    group: "genealogy", owner: "VA 2",
+    short: "Map every heir as a subitem and post the tree.",
+    guidance: [
+      "The subitems are the tree and the screenshot in Updates is how everyone else reads it. Neither one alone is finished work.",
+      "Use the obituary as your audit: count the names in it against your subitems. A mismatch is a missing branch, not a rounding error.",
+      "A predeceased heir's share passes down to their children, not sideways to their siblings — trace the descendants. When someone turns out not to inherit, set Owner to No rather than deleting them, so the next person does not re-research the same dead end."
+    ],
+    requires: ["heirs_min_1","heirs_mapped","ownership_total"],
+    reminders: [
+      { type:"info", title:"The obituary is your audit", body:"It is the cheapest check you have. If the counts do not match the tree, the tree is wrong." },
+      { type:"info", title:"Mark non-heirs No", body:"Setting Owner to No removes a subitem from the completeness check without deleting the research behind it." }
+    ]
+  },
+  {
+    name: "Ready to Assign",
+    group: "done", owner: "Sales floor",
+    short: "Open to the floor. Any closer can claim it.",
+    guidance: [
+      "The fact pattern is the first and often only thing a closer reads. Write it as a story: who died, who inherits, what is wrong with the property, and why these people would sell it.",
+      "Name the friction you already found — a delinquent tax suit, a vacant structure, an heir who will not answer. A closer who learns it on the call has lost the call."
+    ],
+    requires: ["heirs_mapped","ownership_total","fact_pattern_notes","heirs_contactable"],
+    reminders: [
+      { type:"warn", title:"One-way door", body:"After a closer claims it, this record becomes reference only." }
+    ]
+  }
+];
+
+const PICKLISTS = {
+  occupancy:          { title:"Occupancy",           options:["Vacant","Occupied"] },
+  deed_status:        { title:"Deed Status",         options:["Deed Found","Deed Not Found"] },
+  will_status:        { title:"Will Status",         options:["Will Found","Will Not Found"] },
+  tax_lawsuit_status: { title:"Tax Lawsuit Status",  options:["Taxes Under Suit","Lawsuit Found","No Suit Filed"] },
+  ownership_type:     { title:"Ownership Type",      options:["Sole Owned Property","Joint Owned Property"] },
+  probate_status:     { title:"Probate Status",      options:["Filed","Not Filed","Closed","Unknown"] },
+  ancestry_status:    { title:"Ancestry Status",     options:["Not Started","In Progress","Complete","Dead End"] },
+  obituary_status:    { title:"Obituary Status",     options:["Located","Not Located"] }
+};
+
+const SUIT_VALUES = ["Taxes Under Suit","Lawsuit Found"];
+
+const BLOCK_REASONS = [
+  "Waiting on county recorder",
+  "Waiting on probate court",
+  "Ancestry dead end",
+  "Conflicting heir information",
+  "Possible duplicate record",
+  "Needs manager review"
+];
+
+/* Fields tracked by the completeness meter */
+const TRACKED = [
+  "property_address","city","zip","county","ownership_type",
+  "deceased_owner","date_of_death","age_at_death",
+  "deed_status","deed_recorded","will_status","tax_lawsuit_status","probate_status","ancestry_status","obituary_status",
+  "tax_status","taxes_owed","equity","est_value","condition","occupancy",
+  "fact_pattern_notes"
+];
+
+/* Human-readable names for requirement chips */
+const REQ_LABEL = {
+  property_address:"Property address", city:"City", zip:"ZIP code", county:"County",
+  deceased_owner:"Deceased owner",
+  probate_case_no:"Probate case number", date_of_death:"Date of death",
+  ownership_type:"Ownership type",
+  tax_lawsuit_status:"Tax lawsuit status", lawsuit_case_no:"Lawsuit case number",
+  lawsuit_link:"Tax lawsuit link",
+  date_of_birth:"Date of birth", age_at_death:"Age at death",
+  heirs_mapped:"Every owner has name, relationship, address and phone",
+  ownership_total:"Ownership adds up to 100%",
+  deed_status:"Deed status", deed_link:"Deed link", will_status:"Will status",
+  probate_status:"Probate status", tax_status:"Tax status", equity:"Estimated equity",
+  obituary_link:"Obituary link", ancestry_link:"Ancestry link", ancestry_status:"Ancestry status",
+  occupancy:"Occupancy", condition:"Condition", fact_pattern_notes:"Fact pattern notes",
+  heirs_min_1:"At least one heir", heirs_contactable:"One contactable heir"
+};
+
+let currentStage = 1;                 // Records Polling
+let blocked = null;                   // { reason } when flagged
+
+/* ══════════════════════════════════════════════════════════
+   HELPERS
+   ══════════════════════════════════════════════════════════ */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ── Picklist dropdown ─────────────────────────────────────── */
+let openPicker = null;
+
+function closePicker(){
+  if (!openPicker) return;
+  openPicker.panel.remove();
+  openPicker.trigger.setAttribute("aria-expanded","false");
+  openPicker = null;
+}
+
+function showPicker(trigger, title, options, value, onSelect){
+  const reopening = openPicker && openPicker.trigger === trigger;
+  closePicker();
+  if (reopening) return;
+
+  const panel = document.createElement("div");
+  panel.className = "pickPanel";
+  panel.innerHTML = `<div class="pickHead">Suggested ${esc(title)}</div>` +
+    options.map(o => `<div class="pickOptWrap">
+      <button class="pickOpt ${o === value ? 'selected' : ''}" type="button" data-val="${esc(o)}">
+        ${o === value ? '<svg class="pickCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>' : ''}
+        ${esc(o)}
+      </button></div>`).join("");
+  document.body.appendChild(panel);
+
+  trigger.setAttribute("aria-expanded","true");
+  openPicker = { trigger, panel, onSelect };
+  positionPicker();
+}
+
+function positionPicker(){
+  if (!openPicker) return;
+  const { trigger, panel } = openPicker;
+  const r = trigger.getBoundingClientRect();
+  if (r.bottom < 0 || r.top > window.innerHeight){ closePicker(); return; }
+  panel.style.minWidth = Math.max(r.width, 200) + "px";
+  panel.style.left = Math.max(8, Math.min(r.left, window.innerWidth - panel.offsetWidth - 12)) + "px";
+  const below = window.innerHeight - r.bottom;
+  panel.style.top = (below < panel.offsetHeight + 12 && r.top > below)
+    ? Math.max(8, r.top - panel.offsetHeight - 6) + "px"
+    : (r.bottom + 5) + "px";
+}
+
+document.addEventListener("click", e => {
+  const opt = e.target.closest(".pickOpt");
+  if (opt && openPicker){
+    const cb = openPicker.onSelect;
+    const v = opt.dataset.val;
+    closePicker();
+    cb(v);
+    return;
+  }
+  if (openPicker && !e.target.closest(".pickTrigger")) closePicker();
+}, true);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closePicker(); });
+window.addEventListener("resize", closePicker);
+window.addEventListener("scroll", e => {
+  if (!openPicker) return;
+  if (openPicker.panel.contains(e.target)) return;   // scrolling the list itself
+  positionPicker();                                   // follow the trigger instead of closing
+}, true);
+
+function pickTrigger(value, placeholder, extra){
+  const filled = !!(value && String(value).trim());
+  return `<button class="pickTrigger ${extra || ''} ${filled ? '' : 'empty'}" type="button" aria-expanded="false">
+    <span class="pickValue">${filled ? esc(value) : esc(placeholder || 'Select')}</span>
+    <svg class="pickCaret" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+  </button>`;
+}
+
+let toastTimer;
+function toast(msg, isErr){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.toggle("err", !!isErr);
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+/* Ownership maths — one place, so the rule is not guessed at anywhere else.
+   pct is free text ("33.3", "33.3%", " 1/3 " is NOT parsed) -> a number or null. */
+function pctOf(h){
+  const raw = String(h.pct == null ? "" : h.pct).replace(/[%\s]/g, "");
+  if (!raw) return null;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : null;
+}
+function owners(){ return HEIRS.filter(h => h.owner === "Yes"); }
+function ownershipTotal(){
+  return owners().reduce((sum, h) => sum + (pctOf(h) || 0), 0);
+}
+/* 33.3 x 3 = 99.9, so exact 100 would be unreachable in practice.
+   Anything landing within half a point of 100 counts as fully allocated. */
+const PCT_TOLERANCE = 0.5;
+function ownershipBalanced(){
+  const list = owners();
+  if (!list.length) return false;
+  if (list.some(h => pctOf(h) === null)) return false;
+  return Math.abs(ownershipTotal() - 100) <= PCT_TOLERANCE;
+}
+
+function hasValue(key){
+  if (key === "heirs_min_1")      return HEIRS.length > 0;
+  if (key === "ownership_total")  return ownershipBalanced();
+  if (key === "heirs_contactable")return HEIRS.some(h => h.owner === "Yes" && (h.p1 || h.addr));
+  if (key === "heirs_mapped")     return owners().length > 0 &&
+                                    owners().every(h => h.name && h.rel && h.addr && h.p1);
+  if (key.endsWith("_link"))      return !!(LINKS[key] && LINKS[key].url);
+  return !!(DATA[key] && String(DATA[key]).trim());
+}
+
+function linkChip(k){
+  const l = LINKS[k];
+  const has = !!(l && l.url);
+  return `<button class="linkChip ${has ? 'has' : ''}" type="button" data-linkfield="${k}"
+    title="${has ? 'Open or replace' : 'Attach'} the ${esc(l.label)} link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/>
+      <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>
+    </svg>
+  </button>`;
+}
+
+const PENCIL = `<span class="edit" title="Edit"><svg viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
+
+/* Renders one editable SLDS field row */
+function fieldRow(key, label, opts){
+  opts = opts || {};
+  const v = DATA[key];
+  const filled = !!(v && String(v).trim());
+  const required = opts.required;
+  const linkKey = opts.linkField;
+  const linkable = linkKey && LINKS[linkKey] && LINKS[linkKey].url;
+  const cls = ["value-text"];
+  if (!filled) cls.push("empty");
+  if (linkable) cls.push("link");
+  if (opts.multiline) cls.push("multiline");
+  const shown = filled ? esc(v) : (opts.placeholder || "Add value");
+  const head = `<div class="slds-label">${esc(label)}${required && !filled ? '<span class="reqDot" title="Required to advance"></span>' : ''}</div>`;
+
+  const chip = linkKey ? linkChip(linkKey) : "";
+
+  if (PICKLISTS[key]){
+    return `<div class="slds-field pickRow" data-field="${key}">
+      ${head}
+      <div class="slds-value">${pickTrigger(v, opts.placeholder || "Select")}${chip}</div>
+    </div>`;
+  }
+
+  return `<div class="slds-field" data-field="${key}">
+    ${head}
+    <div class="slds-value">
+      <span class="${cls.join(' ')}" data-editable="true"${linkable ? ` data-href="${esc(LINKS[linkKey].url)}"` : ''}>${shown}</span>
+      ${chip}${PENCIL}
+    </div>
+  </div>`;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   RENDER: STAGE PATH
+   ══════════════════════════════════════════════════════════ */
+function renderPath(){
+  const runs = [];
+  STAGES.forEach((st, i) => {
+    const last = runs[runs.length - 1];
+    if (last && last.key === st.group) last.count++;
+    else runs.push({ key: st.group, count: 1 });
+  });
+  let idx = 0;
+  $("#pathGroups").innerHTML = runs.map(r => {
+    const active = currentStage >= idx && currentStage < idx + r.count;
+    idx += r.count;
+    return `<div class="pathGroup ${active ? 'active' : ''}" style="flex:${r.count}" title="${esc(GROUPS[r.key])}">${esc(GROUPS[r.key])}</div>`;
+  }).join("");
+
+  $("#path").innerHTML = STAGES.map((s, i) => {
+    let cls = "pathItem", inner = "";
+    if (i < currentStage){
+      cls += " done";
+      inner = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span class="pathLabel">${esc(s.name)}</span>`;
+    } else if (i === currentStage){
+      cls += blocked ? " current blocked" : " current";
+      inner = `<span class="pathLabel">${esc(s.name)}</span>`;
+    } else {
+      inner = `<span class="pathLabel">${esc(s.name)}</span>`;
+    }
+    return `<button class="${cls}" type="button" data-stage="${i}" title="${esc(s.name)}">${inner}</button>`;
+  }).join("");
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER: GUIDANCE + REQUIREMENTS
+   ══════════════════════════════════════════════════════════ */
+function renderGuidance(){
+  const s = STAGES[currentStage];
+  $("#guidStatusName").textContent = s.name;
+  $("#guidStageMeta").textContent = `${GROUPS[s.group]} · ${s.owner} · ${s.short}`;
+
+  const bb = $("#blockBanner");
+  if (blocked){
+    bb.hidden = false;
+    bb.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px;flex:0 0 auto;margin-top:1px;"><circle cx="12" cy="12" r="9"/><path d="M8.5 8.5 15.5 15.5"/></svg>
+      <div><strong>Blocked &mdash; ${esc(blocked.reason)}</strong><br>This lead is not moving. It stays in ${esc(GROUPS[s.group])} and does not count as idle.</div>
+      <button class="clearBlock" type="button" id="clearBlockBtn">Clear block</button>`;
+  } else {
+    bb.hidden = true;
+    bb.innerHTML = "";
+  }
+  $("#btnBlock").classList.toggle("on", !!blocked);
+  $("#btnBlock").textContent = blocked ? "Blocked" : "Flag blocked";
+  $("#guidList").innerHTML = s.guidance.map(g => `<li>${esc(g)}</li>`).join("");
+
+  const conds  = (s.conditional || []).map(c => Object.assign({}, c, { active: c.when() }));
+  const gates  = s.requires.concat(conds.filter(c => c.active).map(c => c.key));
+  const met    = gates.filter(hasValue);
+  const unmet  = gates.filter(k => !hasValue(k));
+
+  const OK   = `<svg class="reqIcon" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path d="m8 12 2.8 2.8L16 9.5"/></svg>`;
+  const BAD  = `<svg class="reqIcon" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5" stroke-width="2.4"/><circle cx="12" cy="16.2" r="1" fill="#dc2626" stroke="none"/></svg>`;
+  const NA   = `<svg class="reqIcon" viewBox="0 0 24 24" fill="none" stroke="#b6bcc4" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.2 12h7.6" stroke-width="2.2"/></svg>`;
+
+  const row = (k, state, note) =>
+    `<div class="reqItem ${state}"${note ? ` title="${esc(note)}"` : ''}>
+       ${state === 'met' ? OK : state === 'na' ? NA : BAD}
+       <span class="reqName">${esc(REQ_LABEL[k] || k)}</span>
+       ${note ? `<span class="reqNote">${esc(note)}</span>` : ''}
+     </div>`;
+
+  $("#reqGrid").innerHTML =
+    s.requires.map(k => row(k, hasValue(k) ? 'met' : 'unmet')).join("") +
+    conds.map(c => c.active
+      ? row(c.key, hasValue(c.key) ? 'met' : 'unmet', c.why)
+      : row(c.key, 'na', c.na)
+    ).join("");
+
+  $("#guidFootNote").textContent = unmet.length === 0
+    ? "All requirements met for this status."
+    : `${met.length} of ${gates.length} requirements met.`;
+  $("#btnAdvanceLabel").textContent = currentStage === STAGES.length - 1
+    ? "Release to Sales Floor"
+    : "Mark Status as Complete";
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER: REMINDERS  (stage-based + data-driven)
+   ══════════════════════════════════════════════════════════ */
+function renderReminders(){
+  if (!$("#remList")) return;
+  const s = STAGES[currentStage];
+  const items = s.reminders.slice();
+
+  // Data-driven reminders layered on top of the stage's hardcoded ones
+  if (!hasValue("will_link") && DATA.will_status === "No Will Found"){
+    items.push({ type:"info", title:"No will on file", body:"Intestate succession applies. Heir order is set by statute — confirm the state's order before ranking heirs." });
+  }
+  if (DATA.probate_status === "Not Filed"){
+    items.push({ type:"warn", title:"Probate not filed", body:"Nobody has legal authority to sell yet. Sales needs to know an heir must open probate first." });
+  }
+  if (DATA.occupancy === "Vacant"){
+    items.push({ type:"warn", title:"Vacant property", body:"Check for code violations and confirm the structure is still standing before verification." });
+  }
+  if (HEIRS.some(h => h.owner === "Yes" && !h.p1 && !h.addr)){
+    const n = HEIRS.filter(h => h.owner === "Yes" && !h.p1 && !h.addr).length;
+    items.push({ type:"info", title:`${n} heir${n>1?'s':''} with no contact method`, body:"Skip trace is incomplete until every non-excluded heir has a phone or a deliverable address." });
+  }
+  if (!hasValue("fact_pattern_notes")){
+    items.push({ type:"info", title:"Fact pattern notes empty", body:"Sales reads this first. It is required before handoff." });
+  }
+
+  const icons = {
+    stop:`<svg class="remIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 8.5 15.5 15.5"/></svg>`,
+    warn:`<svg class="remIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4.5"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg>`,
+    info:`<svg class="remIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".7" fill="currentColor"/></svg>`
+  };
+
+  $("#remList").innerHTML = items.map(r =>
+    `<div class="remCard ${r.type}">${icons[r.type]}<div><span class="remTitle">${esc(r.title)}</span>${esc(r.body)}</div></div>`
+  ).join("");
+  $("#remCount").textContent = items.length + " active";
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER: FIELDS
+   ══════════════════════════════════════════════════════════ */
+function renderFields(){
+  $("#aboutFields").innerHTML =
+    fieldRow("property_address","Property Address",{required:true, linkField:"maps_link"}) +
+    fieldRow("city","City",{required:true}) +
+    fieldRow("zip","ZIP Code",{required:true}) +
+    fieldRow("county","County",{required:true}) +
+    fieldRow("ownership_type","Ownership Type",{required:true, placeholder:"Sole or joint owned"}) +
+    fieldRow("deceased_owner","Deceased Owner",{required:true}) +
+    fieldRow("date_of_birth","Date of Birth") +
+    fieldRow("date_of_death","Date of Death") +
+    fieldRow("age_at_death","Age at Death") +
+    fieldRow("date_added","Date Added");
+
+  $("#propertyFields").innerHTML =
+    fieldRow("est_value","Estimated Value",{linkField:"zillow_link"}) +
+    fieldRow("equity","Estimated Equity") +
+    fieldRow("taxes_owed","Taxes Owed",{linkField:"tax_assessor_link"}) +
+    fieldRow("condition","Condition") +
+    fieldRow("occupancy","Occupancy") +
+    fieldRow("title_issue","Title Issue",{placeholder:"None noted"});
+
+  $("#infoFields").innerHTML =
+    fieldRow("deed_status","Deed Status",{required:true, linkField:"deed_link"}) +
+    fieldRow("will_status","Will Status",{required:true, linkField:"will_link"}) +
+    fieldRow("probate_status","Probate Status",{required:true, linkField:"probate_link"}) +
+    fieldRow("ancestry_status","Ancestry Status",{linkField:"ancestry_link"}) +
+    fieldRow("obituary_status","Obituary Status",{linkField:"obituary_link"}) +
+    fieldRow("deed_recorded","Deed Recorded Date") +
+    fieldRow("probate_case_no","Probate Case Number",{placeholder:"Only if a case exists"}) +
+    fieldRow("tax_lawsuit_status","Tax Lawsuit Status",{required:true, linkField:"lawsuit_link"}) +
+    fieldRow("lawsuit_case_no","Lawsuit Case Number",{placeholder:"Only if a suit exists"}) +
+    fieldRow("tax_status","Tax Status",{required:true, linkField:"tax_assessor_link"}) +
+    fieldRow("fact_pattern_notes","Fact Pattern Notes",{multiline:true, required:true, placeholder:"Who died, who inherits, what is wrong with the property, why they would sell"});
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER: HEIRS
+   ══════════════════════════════════════════════════════════ */
+function cellInputHTML(v, idx, field, placeholder, extra){
+  return `<input class="cellInput ${extra || ''}" value="${esc(v || '')}" placeholder="${esc(placeholder || '')}"
+    data-heir="${idx}" data-field="${field}" />`;
+}
+function heirPick(value, idx, field, extra){
+  return pickTrigger(value, "Select", `compact heirPick ${extra || ''}`)
+    .replace('<button ', `<button data-heir="${idx}" data-field="${field}" `);
+}
+function renderHeirs(){
+  if (!HEIRS.length){
+    $("#heirTable").innerHTML = `<tbody><tr><td class="emptyState">No heirs identified yet. Start from the obituary.</td></tr></tbody>`;
+    { const hc = $("#heirCount"); if (hc) hc.textContent = "0"; }
+    return;
+  }
+  $("#heirTable").innerHTML =
+    `<thead><tr>
+        <th class="colName">Name</th><th>Relationship</th><th>Owner</th><th>Ownership %</th>
+        <th class="colAddr">Address</th><th>Phone 1</th><th>Phone 2</th><th>Phone 3</th><th>Phone 4</th>
+      </tr></thead>
+     <tbody>${HEIRS.map((h, i) => `<tr class="rct-row">
+        <td class="colName">${cellInputHTML(h.name, i, "name", "Heir name", "nameCell")}</td>
+        <td>${heirPick(h.rel, i, "rel")}</td>
+        <td>${heirPick(h.owner, i, "owner", "narrow")}</td>
+        <td>${cellInputHTML(h.pct, i, "pct", "—", "pctCell")}</td>
+        <td class="colAddr">${cellInputHTML(h.addr, i, "addr", "Add address")}</td>
+        <td>${cellInputHTML(h.p1, i, "p1", "Add phone")}</td>
+        <td>${cellInputHTML(h.p2, i, "p2", "Add phone")}</td>
+        <td>${cellInputHTML(h.p3, i, "p3", "Add phone")}</td>
+        <td>${cellInputHTML(h.p4, i, "p4", "Add phone")}</td>
+      </tr>`).join("")}</tbody>`;
+
+
+
+  { const hc = $("#heirCount"); if (hc) hc.textContent = HEIRS.length; }
+  renderTotals();
+  const sh = $("#snapHeirs"); if (sh) sh.textContent = HEIRS.length + " identified";
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER: OWNERSHIP TOTALS
+   ══════════════════════════════════════════════════════════ */
+function renderTotals(){
+  const el = $("#heirTotals");
+  if (!el) return;
+  const list = owners();
+  if (!list.length){
+    el.className = "heirTotals warn";
+    el.textContent = "No subitems marked Owner: Yes — ownership cannot be allocated yet.";
+    return;
+  }
+  const missing = list.filter(h => pctOf(h) === null).length;
+  const total = ownershipTotal();
+  const ok = ownershipBalanced();
+  const rounded = Math.round(total * 10) / 10;
+  el.className = "heirTotals " + (ok ? "ok" : "warn");
+  el.textContent = ok
+    ? `Ownership fully allocated — ${rounded}% across ${list.length} owner${list.length > 1 ? "s" : ""}. ` +
+      `(Anything within ${PCT_TOLERANCE}% of 100 counts, so 33.3 x 3 = 99.9 passes.)`
+    : missing
+      ? `${rounded}% allocated across ${list.length} owners — ${missing} owner${missing > 1 ? "s have" : " has"} no ownership % set.`
+      : `${rounded}% allocated across ${list.length} owners — ${Math.round(Math.abs(100 - total) * 10) / 10}% ${total > 100 ? "over" : "unallocated"}.`;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   RENDER: SNAPSHOT + COMPLETENESS
+   ══════════════════════════════════════════════════════════ */
+function renderSnapshot(){
+  $$("[data-snap]").forEach(el => {
+    const k = el.getAttribute("data-snap");
+    const v = DATA[k];
+    el.textContent = (v && String(v).trim()) ? v : "—";
+  });
+  $("#hdrAddress").textContent = DATA.property_address || "Untitled lead";
+
+  const filled = TRACKED.filter(hasValue).length;
+  const pct = Math.round(filled / TRACKED.length * 100);
+  const bar = $("#cmpBar");
+  if (bar){
+    bar.style.width = pct + "%";
+    bar.style.background = pct >= 90 ? "#10b981" : pct >= 60 ? "#f59e0b" : "#ef4444";
+    $("#cmpMeta").textContent = `${filled} of ${TRACKED.length} fields · ${pct}%`;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER ALL
+   ══════════════════════════════════════════════════════════ */
+function renderAll(){
+  renderPath();
+  renderGuidance();
+  renderReminders();
+  renderFields();
+  renderHeirs();
+  renderSnapshot();
+}
+
+/* ══════════════════════════════════════════════════════════
+   INTERACTIONS
+   ══════════════════════════════════════════════════════════ */
+
+/* Inner tabs on the info card */
+document.addEventListener("click", e => {
+  const t = e.target.closest(".itab");
+  if (!t) return;
+  const card = t.closest("#cardInfo");
+  card.querySelectorAll(".itab").forEach(x => x.setAttribute("aria-selected", String(x === t)));
+  card.querySelectorAll(".itab-pane").forEach(p => p.classList.toggle("active", p.id === t.dataset.itab));
+});
+
+/* Collapsible section headers */
+document.addEventListener("click", e => {
+  const h = e.target.closest(".secHead");
+  if (!h) return;
+  h.classList.toggle("collapsed");
+  document.getElementById(h.dataset.section).classList.toggle("hidden");
+});
+
+/* Stage path */
+document.addEventListener("click", e => {
+  const item = e.target.closest(".pathItem");
+  if (!item) return;
+  currentStage = Number(item.dataset.stage);
+  renderPath(); renderGuidance(); renderReminders(); renderFields(); renderSnapshot();
+});
+
+/* Collapse guidance from the path chevron — path itself stays visible */
+$("#pathCollapseBtn").addEventListener("click", () => {
+  const w = $("#pathWrap");
+  w.classList.toggle("collapsed");
+  const hidden = w.classList.contains("collapsed");
+  ["#guidHead","#guidBody","#guidFoot"].forEach(sel => {
+    const el = $(sel);
+    if (el) el.style.display = hidden ? "none" : "";
+  });
+  $("#pathWrap").style.paddingBottom = hidden ? "20px" : "";
+});
+
+/* Field picklists */
+document.addEventListener("click", e => {
+  const trig = e.target.closest(".pickRow .pickTrigger");
+  if (!trig) return;
+  const key = trig.closest(".slds-field").dataset.field;
+  const pl = PICKLISTS[key];
+  showPicker(trig, pl.title, pl.options, DATA[key], val => {
+    DATA[key] = val;
+    renderAll();
+    toast(pl.title + " set to " + val);
+  });
+});
+
+/* Heir table picklists */
+document.addEventListener("click", e => {
+  const trig = e.target.closest(".heirPick");
+  if (!trig) return;
+  const i = Number(trig.dataset.heir), field = trig.dataset.field;
+  const isRel = field === "rel";
+  showPicker(trig, isRel ? "Relationships" : "Owner",
+    isRel ? RELATIONSHIPS : OWNER_STATUSES, HEIRS[i][field], val => {
+      HEIRS[i][field] = val;
+      renderAll();
+      toast("Sub-item updated");
+    });
+});
+
+/* Inline edit */
+document.addEventListener("click", e => {
+  const pencil = e.target.closest(".edit");
+  const valueEl = e.target.closest(".value-text");
+
+  if (valueEl && valueEl.dataset.href && !pencil){
+    toast("Opening " + valueEl.dataset.href);
+    return;
+  }
+  if (!pencil) return;
+
+  const field = pencil.closest(".slds-field");
+  const key = field.dataset.field;
+  if (!key) return;
+  const holder = field.querySelector(".slds-value");
+  if (holder.querySelector(".inline-input")) return;
+
+  const original = DATA[key] || "";
+  holder.innerHTML = `<input class="inline-input" value="${esc(original)}" />`;
+  const box = holder.querySelector("input");
+  box.focus(); box.select();
+
+  const commit = save => {
+    const next = box.value.trim();
+    if (save && next === original){ renderFields(); return; }   // no-op, skip full re-render
+    if (save) DATA[key] = next;
+    renderAll();
+    if (save) toast(`${REQ_LABEL[key] || key} saved`);
+  };
+  box.addEventListener("keydown", ev => {
+    if (ev.key === "Enter") commit(true);
+    if (ev.key === "Escape") commit(false);
+  });
+  box.addEventListener("blur", () => commit(true));
+});
+
+/* Attach / open a source link from its field row */
+document.addEventListener("click", e => {
+  const chip = e.target.closest(".linkChip");
+  if (!chip) return;
+  const k = chip.dataset.linkfield;
+  const l = LINKS[k];
+  const row = chip.closest(".slds-field");
+  if (row.querySelector(".linkEditor")) return;
+
+  const editor = document.createElement("div");
+  editor.className = "linkEditor";
+  editor.innerHTML = `<input class="inline-input" placeholder="Paste the ${esc(l.label)} URL" value="${esc(l.url || "")}" />`;
+  row.appendChild(editor);
+  const box = editor.querySelector("input");
+  box.focus(); box.select();
+
+  const done = save => {
+    if (save) l.url = box.value.trim();
+    renderAll();
+    if (save) toast(l.url ? l.label + " link saved" : l.label + " link cleared");
+  };
+  box.addEventListener("keydown", ev => {
+    if (ev.key === "Enter") done(true);
+    if (ev.key === "Escape") done(false);
+  });
+  box.addEventListener("blur", () => done(true));
+});
+
+/* Advance stage */
+$("#btnAdvance").addEventListener("click", () => {
+  const s = STAGES[currentStage];
+  const gates = s.requires.concat((s.conditional || []).filter(c => c.when()).map(c => c.key));
+  const unmet = gates.filter(k => !hasValue(k));
+  if (unmet.length){
+    toast(`${unmet.length} requirement${unmet.length>1?'s':''} still missing: ${REQ_LABEL[unmet[0]]}${unmet.length>1?'…':''}`, true);
+    return;
+  }
+  if (blocked){
+    toast("Clear the block before advancing this lead", true);
+    return;
+  }
+  if (currentStage === STAGES.length - 1){
+    toast("Released to the sales floor");
+    return;
+  }
+  currentStage++;
+  renderAll();
+  toast("Advanced to " + STAGES[currentStage].name);
+});
+
+$("#btnBlock").addEventListener("click", e => {
+  if (blocked){ blocked = null; renderAll(); toast("Block cleared"); return; }
+  showPicker(e.currentTarget, "Block Reasons", BLOCK_REASONS, null, val => {
+    blocked = { reason: val };
+    renderAll();
+    toast("Lead flagged as blocked");
+  });
+});
+
+document.addEventListener("click", e => {
+  if (!e.target.closest("#clearBlockBtn")) return;
+  blocked = null; renderAll(); toast("Block cleared");
+});
+
+/* ── Add Subitem: name is mandatory, everything else is suggested ── */
+let draft = { rel:"", owner:"Yes" };
+
+function renderDraftPickers(){
+  $("#subRelWrap").innerHTML   = pickTrigger(draft.rel,   "Select relationship", "compact draftPick").replace('<button ', '<button data-draft="rel" ');
+  $("#subOwnerWrap").innerHTML = pickTrigger(draft.owner, "Select",              "compact narrow draftPick").replace('<button ', '<button data-draft="owner" ');
+}
+
+function openSubForm(open){
+  const f = $("#subForm");
+  f.hidden = !open;
+  $("#btnAddSub").hidden = open;
+  if (!open) return;
+  draft = { rel:"", owner:"Yes" };
+  ["#subName","#subPct","#subAddr","#subPhone"].forEach(sel => { $(sel).value = ""; });
+  $("#subName").classList.remove("invalid");
+  $("#subHint").textContent = "Everything except the name can be filled in later.";
+  $("#subHint").className = "subHint";
+  renderDraftPickers();
+  $("#subName").focus();
+}
+
+$("#btnAddSub").addEventListener("click", () => openSubForm(true));
+$("#btnSubCancel").addEventListener("click", () => openSubForm(false));
+
+document.addEventListener("click", e => {
+  const t = e.target.closest(".draftPick");
+  if (!t) return;
+  const field = t.dataset.draft;
+  const isRel = field === "rel";
+  showPicker(t, isRel ? "Relationships" : "Owner", isRel ? RELATIONSHIPS : OWNER_STATUSES, draft[field], val => {
+    draft[field] = val;
+    renderDraftPickers();
+  });
+});
+
+function createSubitem(){
+  const name = $("#subName").value.trim();
+  if (!name){
+    $("#subName").classList.add("invalid");
+    $("#subName").focus();
+    $("#subHint").textContent = "A subitem needs a name before it can be created.";
+    $("#subHint").className = "subHint bad";
+    return;
+  }
+  HEIRS.push({
+    name,
+    rel:   draft.rel   || "",
+    owner: draft.owner || "Yes",
+    pct:   $("#subPct").value.trim(),
+    addr:  $("#subAddr").value.trim(),
+    p1:    $("#subPhone").value.trim(),
+    p2:"", p3:"", p4:""
+  });
+  openSubForm(false);
+  renderAll();
+  toast(`Subitem "${name}" created`);
+}
+
+$("#btnSubCreate").addEventListener("click", createSubitem);
+$("#subForm").addEventListener("keydown", e => {
+  if (e.key === "Enter"){ e.preventDefault(); createSubitem(); }
+  if (e.key === "Escape") openSubForm(false);
+});
+$("#subName").addEventListener("input", () => $("#subName").classList.remove("invalid"));
+
+$("#btnRefresh").addEventListener("click", () => { renderAll(); toast("Record refreshed"); });
+
+renderAll();
+</script>
+</body>
+</html>
