@@ -48,7 +48,7 @@ button{ font-family: var(--font); }
 .recIdent{ display:flex; align-items:center; gap:15px; min-width:0; }
 .recIcon{
   width:44px; height:44px; border-radius:50%; flex:0 0 auto;
-  background:#9050e9; display:flex; align-items:center; justify-content:center;
+  background:#5867e8; display:flex; align-items:center; justify-content:center;
 }
 .recIcon svg{ width:22px; height:22px; color:#fff; }
 .recTitle{
@@ -110,7 +110,7 @@ button{ font-family: var(--font); }
   transition:background .12s ease;
 }
 .secHead:hover{ background:#f1f3f5; }
-.secHead svg{ width:13px; height:13px; color:#706e6b; flex:0 0 auto; transition:transform .18s ease; }
+.secHead svg{ width:18px; height:18px; color:#706e6b; flex:0 0 auto; transition:transform .18s ease; }
 .secHead.collapsed svg{ transform:rotate(-90deg); }
 .secMeta{ margin-left:auto; display:flex; align-items:center; gap:9px; }
 .secActions{ padding:14px 24px 6px 24px; }
@@ -140,9 +140,6 @@ button{ font-family: var(--font); }
 .subHint{ font-size:12px; color:var(--muted); margin-right:auto; }
 .subHint.bad{ color:#b91c1c; }
 
-.heirTotals{ padding:12px 24px 0 24px; font-size:12.5px; line-height:1.5; }
-.heirTotals.ok{ color:#0a5c3c; }
-.heirTotals.warn{ color:#b45309; }
 
 .linkChip{
   display:inline-flex; align-items:center; justify-content:center;
@@ -153,6 +150,33 @@ button{ font-family: var(--font); }
 .linkChip.has{ color:var(--blue); }
 .linkChip:hover{ background:rgba(0,0,0,.05); color:#0b5cab; }
 .linkChip svg{ width:14px; height:14px; }
+
+/* A link that is attached becomes a one-click open button, with a quiet
+   pencil beside it for changing the URL. */
+.linkPair{ display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; margin-left:12px; }
+.linkOpen{
+  display:inline-flex; align-items:center; gap:5px; flex:0 0 auto;
+  font-family:var(--font); font-size:13px; font-weight:400; line-height:1;
+  padding:0; border:0; background:transparent; cursor:pointer; white-space:nowrap;
+  color:var(--blue); transition:color .12s ease;
+}
+.linkOpen:hover{ text-decoration:underline; color:#0b5cab; }
+.linkOpen svg{ width:12px; height:12px; flex:0 0 auto; }
+.linkAdd{
+  display:inline-flex; align-items:center; gap:5px; flex:0 0 auto;
+  font-family:var(--font); font-size:13px; line-height:1;
+  padding:0; border:0; background:transparent; cursor:pointer; white-space:nowrap;
+  color:#9ca3af; transition:color .12s ease;
+}
+.linkAdd:hover{ color:var(--blue); text-decoration:underline; }
+.linkEdit{
+  display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
+  width:22px; height:22px; border:0; border-radius:6px; background:transparent;
+  color:#c4c9d4; cursor:pointer; opacity:0; transition:opacity .12s ease, color .12s ease;
+}
+.slds-field:hover .linkEdit{ opacity:1; }
+.linkEdit:hover{ color:var(--blue); background:rgba(0,0,0,.05); }
+.linkEdit svg{ width:13px; height:13px; }
 .linkEditor{ padding:6px 0 4px; }
 
 /* ---------- PICKLIST DROPDOWN ---------- */
@@ -178,6 +202,8 @@ button{ font-family: var(--font); }
   border-radius:6px;
 }
 .pickTrigger.compact.narrow{ min-width:88px; }
+/* the heirs table gets a larger caret — it is a denser grid to scan */
+.pickTrigger.compact .pickCaret{ width:15px; height:15px; }
 
 .pickPanel{
   position:fixed; z-index:2000; background:#fff; border-radius:10px;
@@ -207,9 +233,9 @@ button{ font-family: var(--font); }
 .tab-pane{ display:block; }
 
 /* ---------- STAGE PATH ---------- */
-.pathWrap{ padding: 18px 24px 6px 24px; display:flex; align-items:center; gap:12px; }
+.pathWrap{ padding: 12px 24px 4px 24px; display:flex; align-items:center; gap:12px; }
 .pathStack{ flex:1; min-width:0; }
-.pathGroups{ display:flex; margin-bottom:7px; }
+.pathGroups{ display:flex; margin-bottom:5px; }
 .pathGroup{
   min-width:0; padding:0 2px 5px 2px; position:relative;
   font-size:11px; letter-spacing:.06em; text-transform:uppercase;
@@ -232,7 +258,7 @@ button{ font-family: var(--font); }
 .path{ display:flex; flex:1; min-width:0; }
 .pathItem{
   font-family:var(--font);
-  flex:1; min-width:0; height:34px; border:0; cursor:pointer;
+  flex:1; min-width:0; height:30px; border:0; cursor:pointer;
   display:flex; align-items:center; justify-content:center; gap:6px;
   font-size:12.5px; font-weight:400; letter-spacing:.01em;
   background:#e5e5e5; color:#514f4d; margin-right:0;
@@ -257,12 +283,12 @@ button{ font-family: var(--font); }
 .recGrid{
   display:grid;
   grid-template-columns: minmax(240px,0.55fr) minmax(0,1.45fr);
-  gap:16px;
+  gap:11px;
   padding: 0 0 24px 0;
   align-items:start;
 }
 @media (max-width:900px){ .recGrid{ grid-template-columns:1fr; } }
-.colStack{ display:flex; flex-direction:column; gap:16px; min-width:0; }
+.colStack{ display:flex; flex-direction:column; gap:11px; min-width:0; }
 
 .card{
   background:#fff; border:0; border-radius:14px;
@@ -302,6 +328,13 @@ button{ font-family: var(--font); }
 .value-text.link{ color:var(--blue); cursor:pointer; }
 .value-text.link:hover{ text-decoration:underline; }
 .value-text.empty{ color:#9ca3af; font-style:italic; }
+/* the whole value reads as editable, not just the pencil */
+.value-text[data-editable]:not(.link){ cursor:text; border-radius:4px; padding:1px 4px; margin-left:-4px; }
+.slds-field:hover .value-text[data-editable]:not(.link){ background:rgba(13,31,110,.045); }
+/* Low tax bill / low equity — flagged so the VA re-checks it is worth working */
+.value-text.flag{ color:#c0281f; font-weight:500; }
+.valWrap{ display:flex; align-items:center; gap:7px; min-width:0; }
+.flagIcon{ width:13px; height:13px; color:#c0281f; flex:0 0 auto; }
 .edit{
   opacity:.55; transition:opacity .1s ease, color .1s ease, background .1s ease;
   color:#c4c9d4; cursor:pointer; flex:0 0 auto; display:flex; align-items:center;
@@ -321,32 +354,18 @@ button{ font-family: var(--font); }
   width:5px; height:5px; border-radius:50%; background:#dc2626; flex:0 0 auto;
 }
 
-/* ---------- STATUS PILLS ---------- */
-.pill{
-  display:inline-flex; align-items:center; gap:5px; border-radius:999px;
-  padding:2px 9px; font-size:11.5px; font-weight:400; white-space:nowrap;
-}
-.pill .dot{ width:6px; height:6px; border-radius:50%; flex:0 0 auto; }
-.pill.green{ background:#d1fae5; color:#065f46; } .pill.green .dot{ background:#10b981; }
-.pill.blue{ background:#dbeafe; color:#1e40af; }  .pill.blue .dot{ background:#3b82f6; }
-.pill.amber{ background:#fef3c7; color:#92400e; } .pill.amber .dot{ background:#f59e0b; }
-.pill.red{ background:#fee2e2; color:#991b1b; }   .pill.red .dot{ background:#ef4444; }
-.pill.indigo{ background:#e0e7ff; color:#3730a3; }.pill.indigo .dot{ background:#6366f1; }
-.pill.gray{ background:#f1f3f5; color:#4b5563; }  .pill.gray .dot{ background:#9ca3af; }
-
 /* ---------- GUIDANCE PANEL ---------- */
 .guidHead{
   display:flex; align-items:center; justify-content:space-between; gap:14px;
-  padding:12px 24px 6px 24px;
+  padding:8px 24px 4px 24px;
 }
-.guidStatus{ font-size:19px; font-weight:400; color:#181818; letter-spacing:-.2px; }
+.guidStatus{ font-size:17.5px; font-weight:400; color:#181818; letter-spacing:-.2px; }
 .guidStatus span{ color:#181818; font-weight:400; }
-.guidStage{ font-size:12.5px; color:var(--muted); margin-top:5px; padding:0 24px 4px; }
-.guidBody{ padding:6px 24px 20px 24px; display:grid; grid-template-columns:1fr 1fr; gap:0 32px; align-items:start; }
+.guidBody{ padding:4px 24px 12px 24px; display:grid; grid-template-columns:1.5fr 1fr; gap:0 32px; align-items:start; }
 @media (max-width:900px){ .guidBody{ grid-template-columns:1fr; } }
 .btnStage{
   border:0; background:var(--blue); color:#fff; font-family:var(--font);
-  font-size:13.5px; font-weight:500; padding:9px 20px; border-radius:999px;
+  font-size:13.5px; font-weight:500; padding:7px 18px; border-radius:999px;
   cursor:pointer; display:flex; align-items:center; gap:8px; white-space:nowrap;
   transition:background .12s ease, transform .08s ease;
 }
@@ -355,7 +374,7 @@ button{ font-family: var(--font); }
 .btnBlock{
   border:1px solid var(--line-2); background:#fff; color:#6b7280;
   font-family:var(--font); font-size:13px; font-weight:400;
-  padding:8px 15px; border-radius:999px; cursor:pointer;
+  padding:6px 14px; border-radius:999px; cursor:pointer;
   transition:background .12s ease, color .12s ease, border-color .12s ease;
 }
 .btnBlock:hover{ background:#fdf3f3; border-color:#f0c9c9; color:#b91c1c; }
@@ -376,11 +395,11 @@ button{ font-family: var(--font); }
 .btnStage svg{ width:14px; height:14px; }
 .guidLabel{
   font-size:14px; letter-spacing:0; text-transform:none;
-  color:#181818; font-weight:400; margin: 6px 0 12px;
+  color:#181818; font-weight:400; margin: 2px 0 8px;
 }
-.guidList{ margin:0; padding:0 0 10px 0; list-style:none; }
+.guidList{ margin:0; padding:0 0 6px 0; list-style:none; }
 .guidList li{
-  font-size:13.5px; color:#374151; line-height:1.55; padding:0 0 7px 16px;
+  font-size:13.5px; color:#374151; line-height:1.5; padding:0 0 5px 16px;
   position:relative;
 }
 .guidList li::before{
@@ -389,9 +408,11 @@ button{ font-family: var(--font); }
 }
 
 /* requirements to advance */
-.reqGrid{ display:grid; grid-template-columns:1fr; gap:9px; padding-bottom:4px; }
+.reqGrid{ display:grid; grid-template-columns:1fr; gap:6px; padding-bottom:2px; }
+.reqGrid.split{ grid-template-columns:1fr 1fr; gap:0 26px; }
+.reqCol{ display:flex; flex-direction:column; gap:6px; min-width:0; }
 @media (max-width:640px){ .reqGrid{ grid-template-columns:1fr; } }
-.reqItem{ display:flex; align-items:center; gap:8px; font-size:13px; }
+.reqItem{ display:flex; align-items:center; gap:8px; font-size:12.5px; line-height:1.4; }
 .reqIcon{ width:15px; height:15px; flex:0 0 auto; }
 .reqItem.met{ color:#065f46; }
 .reqItem.unmet{ color:#8b1a1a; }
@@ -400,11 +421,11 @@ button{ font-family: var(--font); }
 .reqItem .reqName{ flex:0 0 auto; }
 .reqNote{ font-size:11.5px; color:#9aa3af; margin-left:6px; line-height:1.5; }
 .reqItem.na .reqName{ text-decoration:line-through; text-decoration-color:#d5d9de; }
-.reqItem .reqName{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.reqItem .reqName{ overflow:hidden; white-space:normal; overflow-wrap:anywhere; }
 
 .guidFoot{
   display:flex; align-items:center; gap:12px;
-  padding:0 24px 18px 24px; border:0; background:transparent;
+  padding:0 24px 10px 24px; border:0; background:transparent;
 }
 .guidFootNote{ font-size:12px; color:var(--muted); }
 
@@ -499,7 +520,7 @@ button{ font-family: var(--font); }
   <div class="recHeader">
     <div class="recIdent">
       <div class="recIcon">
-        <svg viewBox="0 0 520 520" fill="currentColor"><path d="M460 90H60c-27 0-50 22-50 50v240c0 27 23 50 50 50h400c28 0 50-22 50-50V140c0-28-22-50-50-50zM248 372H104c-16 0-28-17-28-34 1-25 27-40 54-52 19-8 22-16 22-24s-5-16-12-22a55 55 0 0 1-17-41c0-32 19-58 52-58s52 27 52 58c0 17-6 32-17 41-7 6-12 13-12 22 0 8 2 16 22 23 27 12 53 28 54 53 3 17-10 34-26 34zm195-58c0 9-8 17-17 17h-75c-9 0-17-7-17-17v-25c0-9 8-17 17-17h75c9 0 17 7 17 17zm0-91c0 9-8 17-17 17H302c-9 0-17-7-17-17v-25c0-9 8-17 17-17h125c9 0 17 7 17 17v25z"/></svg>
+        <svg viewBox="0 0 520 520" fill="currentColor"><path d="M500 269c1-17-12-22-17-22H303c-16 0-18 17-18 18v195h215zM376 409c0 9-7 17-17 17h-17c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17zm0-85c0 9-7 17-17 17h-17c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17zm83 85c0 9-7 17-17 17h-17c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17zm0-85c0 9-7 17-17 17h-17c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17zM334 179V82c1-17-11-22-16-22H38c-16 0-18 17-18 18v382h215V216s0-20 18-20h65c10 0 16-10 16-17zM111 401c0 9-7 17-17 17H78c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17v17zm0-86c0 9-7 17-17 17H78c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17v17zm0-85c0 9-7 17-17 17H78c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17v17zm0-85c0 9-7 17-17 17H78c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17v17zm91 256c0 9-7 17-17 17h-17c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17zm0-86c0 9-7 17-17 17h-17c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17zm0-85c0 9-7 17-17 17h-17c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17zm0-85c0 9-7 17-17 17h-17c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17zm91 0c0 9-7 17-17 17h-16c-9 0-17-8-17-17v-17c0-9 7-17 17-17h17c9 0 17 8 17 17v17z"/></svg>
       </div>
       <div class="recTitle" id="hdrAddress">&mdash;</div>
     </div>
@@ -561,7 +582,6 @@ button{ font-family: var(--font); }
               </div>
             </div>
             <div class="blockBanner" id="blockBanner" hidden></div>
-            <div class="guidStage" id="guidStageMeta">&mdash;</div>
             <div class="guidBody" id="guidBody">
               <div>
                 <div class="guidLabel">Requirements to Advance</div>
@@ -587,7 +607,7 @@ button{ font-family: var(--font); }
             <div class="itab-pane active" id="itab-details">
               <button class="secHead" type="button" data-section="secDetails">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
-                <span>Prospecting Information</span>
+                <span>Due Diligence Phase 2</span>
               </button>
               <div class="secBody" id="secDetails">
                 <div class="infoGrid" id="infoFields"></div>
@@ -597,7 +617,6 @@ button{ font-family: var(--font); }
             <div class="itab-pane" id="itab-heirs">
               <div class="secBody flush" id="secHeirs">
                 <div class="rct-scroll"><table class="rct-table" id="heirTable"></table></div>
-                <div class="heirTotals" id="heirTotals"></div>
                 <div class="subForm" id="subForm" hidden>
                   <div class="subFormHead">New subitem</div>
                   <div class="subFormGrid">
@@ -663,34 +682,25 @@ const DATA = {
   city: "Houston",
   zip: "77096",
   county: "Harris",
-  ownership_type: "",
   date_added: "07/28/2026",
   days_in_stage: "6 days",
 
-  deceased_owner: "Marguerite A. Delacroix",
   date_of_birth: "",
   date_of_death: "03/14/2023",
   age_at_death: "81",
 
   deed_status: "Deed Found",
-  deed_recorded: "06/02/1998",
-  will_status: "Will Not Found",
-  probate_status: "Not Filed",
+  probate_status: "No Open Cases",
   probate_case_no: "",
   tax_lawsuit_status: "Taxes Under Suit",
   lawsuit_case_no: "",
-  ancestry_status: "In Progress",
-  obituary_status: "Located",
 
-  tax_status: "Delinquent — 2 yrs",
-  taxes_owed: "$11,480",
+  tax_status: "2 Years Unpaid",
+  taxes_owed: "$2,140",
   equity: "$184,000",
-  est_value: "$237,000",
-  condition: "Deferred Maintenance",
+  condition: "Medium Rehab/ Needs work",
   occupancy: "Vacant",
-  title_issue: "",
-
-  fact_pattern_notes: ""
+  title_issue: ""
 };
 
 const LINKS = {
@@ -702,7 +712,7 @@ const LINKS = {
   ancestry_link:     { label: "Ancestry Tree",   url: "https://ancestry.example.com/tree/88213" },
   tax_assessor_link: { label: "Tax Assessor",    url: "https://hcad.example.org/parcel/0721340000012" },
   zillow_link:       { label: "Zillow",          url: "https://zillow.example.com/homes/4418-beechnut" },
-  maps_link:         { label: "Google Maps",     url: "" }
+  maps_link:         { label: "Maps",            url: "" }
 };
 
 const RELATIONSHIPS = ["Spouse","Surviving spouse","Predeceased spouse","Son","Daughter","Stepchild",
@@ -743,36 +753,34 @@ const STAGES = [
     guidance: [
       "County lists arrive with city and ZIP missing more often than not. Fill both before anything else."
     ],
-    requires: ["property_address","city","zip","county","deceased_owner"],
+    requires: ["property_address","city","zip","county"],
     reminders: [
-      { type:"stop", title:"No records yet", body:"Pulling a deed on a living owner wastes a fee and an hour. Confirm the death, then move to Records Polling." },
+      { type:"stop", title:"No records yet", body:"Pulling a deed on a living owner wastes a fee and an hour. Confirm the death, then move to Records Pulling." },
       { type:"info", title:"Duplicate check by address", body:"Search by street address, not owner name — heirs often share a surname with the decedent." }
     ]
   },
   {
-    name: "Records Polling",
+    name: "Records Pulling",
     group: "intake", owner: "VA 1",
     short: "Pull every document and draft the transfer history.",
     guidance: [
-      "Read the vesting language before anything else. Sole owner, joint tenancy with survivorship, and trust are three different files — and one of them may have no estate to chase at all.",
-      "Grab every adjacent document while you are already in the portal: prior deeds, liens, affidavits, releases. Going back for one document later costs more than pulling five now.",
-      "The transfer history you write in Updates is the real deliverable. Write it so the next VA and the closer can follow how title moved without reopening a single document. Nothing on this widget tracks it — the write-up is the only record of your reasoning."
+      "Read the vesting language before anything else. Sole owner, joint tenancy with survivorship, and trust are three different files — and one of them may have no estate to chase at all."
     ],
-    requires: ["deed_status","deed_link","will_status","obituary_link","tax_lawsuit_status","probate_status","ownership_type"],
+    requires: ["deed_status","deed_link","obituary_link","tax_lawsuit_status","probate_status","date_of_birth","date_of_death","age_at_death"],
     conditional: [
       { key:"lawsuit_case_no",
         when: () => SUIT_VALUES.includes(DATA.tax_lawsuit_status),
         why:  "Required because the taxes are under suit.",
         na:   "Not required — no tax suit on this property." },
       { key:"probate_case_no",
-        when: () => DATA.will_status === "Will Found",
-        why:  "Required because a will was found.",
-        na:   "Not required — no will found, so no case to reference." }
+        when: () => PROBATE_CASE_VALUES.includes(DATA.probate_status),
+        why:  "Required because a probate case exists.",
+        na:   "Not required — no probate case on file to reference." }
     ],
     reminders: [
       { type:"stop", title:"Transfer history is not optional", body:"The deed link alone does not hand off. VA 2 reads the Updates write-up to understand how title moved before she opens Ancestry." },
       { type:"warn", title:"Recorder portals lag", body:"County postings can run 5–10 business days behind. Mark Deed Not Found only after checking twice." },
-      { type:"info", title:"Case numbers are conditional", body:"The lawsuit case number is only demanded when taxes are under suit, and the probate case number only when a will was found. The requirement list updates itself as you set those two fields." }
+      { type:"info", title:"Case numbers are conditional", body:"The lawsuit case number is only demanded when taxes are under suit, and the probate case number only when a probate case exists. The requirement list updates itself as you set those two fields." }
     ]
   },
   {
@@ -780,10 +788,9 @@ const STAGES = [
     group: "genealogy", owner: "VA 2",
     short: "Establish who the decedent was before mapping who survives them.",
     guidance: [
-      "Read VA 1's transfer history in Updates before opening Ancestry. It tells you whether a tree is worth building — if a joint tenant survived, title already passed and this file should be flagged, not researched.",
-      "Match on date of birth and last known city, never on name alone. A common surname in a large county will hand you a convincing wrong person, and every hour after that is spent mapping a stranger's family."
+      "Read VA 1's transfer history in Updates before opening Ancestry. It tells you whether a tree is worth building — if a joint tenant survived, title already passed and this file should be flagged, not researched."
     ],
-    requires: ["date_of_birth","date_of_death","age_at_death","ancestry_link"],
+    requires: ["ancestry_link"],
     reminders: [
       { type:"warn", title:"Check vesting before you build", body:"If a joint tenant survived, title already passed. Stop and flag it rather than mapping a tree nobody needs." },
       { type:"info", title:"Verify identity, not just the name", body:"Cross-check DOB and last known city against the deed before trusting an Ancestry match." }
@@ -794,11 +801,9 @@ const STAGES = [
     group: "genealogy", owner: "VA 2",
     short: "Map every heir as a subitem and post the tree.",
     guidance: [
-      "The subitems are the tree and the screenshot in Updates is how everyone else reads it. Neither one alone is finished work.",
-      "Use the obituary as your audit: count the names in it against your subitems. A mismatch is a missing branch, not a rounding error.",
       "A predeceased heir's share passes down to their children, not sideways to their siblings — trace the descendants. When someone turns out not to inherit, set Owner to No rather than deleting them, so the next person does not re-research the same dead end."
     ],
-    requires: ["heirs_min_1","heirs_mapped","ownership_total"],
+    requires: ["heirs_min_1","heirs_mapped"],
     reminders: [
       { type:"info", title:"The obituary is your audit", body:"It is the cheapest check you have. If the counts do not match the tree, the tree is wrong." },
       { type:"info", title:"Mark non-heirs No", body:"Setting Owner to No removes a subitem from the completeness check without deleting the research behind it." }
@@ -809,10 +814,9 @@ const STAGES = [
     group: "done", owner: "Sales floor",
     short: "Open to the floor. Any closer can claim it.",
     guidance: [
-      "The fact pattern is the first and often only thing a closer reads. Write it as a story: who died, who inherits, what is wrong with the property, and why these people would sell it.",
-      "Name the friction you already found — a delinquent tax suit, a vacant structure, an heir who will not answer. A closer who learns it on the call has lost the call."
+      "The write-up in Updates is the first and often only thing a closer reads. Tell it as a story: who died, who inherits, what is wrong with the property, and why these people would sell it — including the friction you already found."
     ],
-    requires: ["heirs_mapped","ownership_total","fact_pattern_notes","heirs_contactable"],
+    requires: ["heirs_mapped","heirs_contactable"],
     reminders: [
       { type:"warn", title:"One-way door", body:"After a closer claims it, this record becomes reference only." }
     ]
@@ -822,15 +826,15 @@ const STAGES = [
 const PICKLISTS = {
   occupancy:          { title:"Occupancy",           options:["Vacant","Occupied"] },
   deed_status:        { title:"Deed Status",         options:["Deed Found","Deed Not Found"] },
-  will_status:        { title:"Will Status",         options:["Will Found","Will Not Found"] },
   tax_lawsuit_status: { title:"Tax Lawsuit Status",  options:["Taxes Under Suit","Lawsuit Found","No Suit Filed"] },
-  ownership_type:     { title:"Ownership Type",      options:["Sole Owned Property","Joint Owned Property"] },
-  probate_status:     { title:"Probate Status",      options:["Filed","Not Filed","Closed","Unknown"] },
-  ancestry_status:    { title:"Ancestry Status",     options:["Not Started","In Progress","Complete","Dead End"] },
-  obituary_status:    { title:"Obituary Status",     options:["Located","Not Located"] }
+  probate_status:     { title:"Probate Status",      options:["Open Probate","Closed Probate","No Open Cases"] },
+  tax_status:         { title:"Tax Status",          options:["1 Year Unpaid","2 Years Unpaid","3-4 Years Unpaid","Over 5 Years Unpaid","Paid Off"] },
+  condition:          { title:"Condition",           options:["Heavy Rehab/ Possible teardown","Medium Rehab/ Needs work","Light Rehab","Remodeled/New","Unknown Condition","Vacant Land"] },
+  title_issue:        { title:"Title Issues",        options:["AOH Needed","Liens","Memo"] }
 };
 
 const SUIT_VALUES = ["Taxes Under Suit","Lawsuit Found"];
+const PROBATE_CASE_VALUES = ["Open Probate","Closed Probate"];
 
 const BLOCK_REASONS = [
   "Waiting on county recorder",
@@ -843,32 +847,28 @@ const BLOCK_REASONS = [
 
 /* Fields tracked by the completeness meter */
 const TRACKED = [
-  "property_address","city","zip","county","ownership_type",
-  "deceased_owner","date_of_death","age_at_death",
-  "deed_status","deed_recorded","will_status","tax_lawsuit_status","probate_status","ancestry_status","obituary_status",
-  "tax_status","taxes_owed","equity","est_value","condition","occupancy",
-  "fact_pattern_notes"
+  "property_address","city","zip","county",
+  "date_of_death","age_at_death",
+  "deed_status","tax_lawsuit_status","probate_status",
+  "tax_status","taxes_owed","equity","condition","occupancy"
 ];
 
 /* Human-readable names for requirement chips */
 const REQ_LABEL = {
   property_address:"Property address", city:"City", zip:"ZIP code", county:"County",
-  deceased_owner:"Deceased owner",
-  probate_case_no:"Probate case number", date_of_death:"Date of death",
-  ownership_type:"Ownership type",
+  probate_case_no:"Probate case number", date_of_death:"Death date",
   tax_lawsuit_status:"Tax lawsuit status", lawsuit_case_no:"Lawsuit case number",
   lawsuit_link:"Tax lawsuit link",
-  date_of_birth:"Date of birth", age_at_death:"Age at death",
+  date_of_birth:"Birth date", age_at_death:"Age",
   heirs_mapped:"Every owner has name, relationship, address and phone",
-  ownership_total:"Ownership adds up to 100%",
-  deed_status:"Deed status", deed_link:"Deed link", will_status:"Will status",
+  deed_status:"Deed status", deed_link:"Deed link",
   probate_status:"Probate status", tax_status:"Tax status", equity:"Estimated equity",
-  obituary_link:"Obituary link", ancestry_link:"Ancestry link", ancestry_status:"Ancestry status",
-  occupancy:"Occupancy", condition:"Condition", fact_pattern_notes:"Fact pattern notes",
+  obituary_link:"Obituary", ancestry_link:"Ancestry", will_link:"Will link",
+  occupancy:"Occupancy", condition:"Condition", title_issue:"Title issues",
   heirs_min_1:"At least one heir", heirs_contactable:"One contactable heir"
 };
 
-let currentStage = 1;                 // Records Polling
+let currentStage = 1;                 // Records Pulling
 let blocked = null;                   // { reason } when flagged
 
 /* ══════════════════════════════════════════════════════════
@@ -958,31 +958,10 @@ function toast(msg, isErr){
   toastTimer = setTimeout(() => t.classList.remove("show"), 2500);
 }
 
-/* Ownership maths — one place, so the rule is not guessed at anywhere else.
-   pct is free text ("33.3", "33.3%", " 1/3 " is NOT parsed) -> a number or null. */
-function pctOf(h){
-  const raw = String(h.pct == null ? "" : h.pct).replace(/[%\s]/g, "");
-  if (!raw) return null;
-  const n = Number(raw);
-  return Number.isFinite(n) ? n : null;
-}
 function owners(){ return HEIRS.filter(h => h.owner === "Yes"); }
-function ownershipTotal(){
-  return owners().reduce((sum, h) => sum + (pctOf(h) || 0), 0);
-}
-/* 33.3 x 3 = 99.9, so exact 100 would be unreachable in practice.
-   Anything landing within half a point of 100 counts as fully allocated. */
-const PCT_TOLERANCE = 0.5;
-function ownershipBalanced(){
-  const list = owners();
-  if (!list.length) return false;
-  if (list.some(h => pctOf(h) === null)) return false;
-  return Math.abs(ownershipTotal() - 100) <= PCT_TOLERANCE;
-}
 
 function hasValue(key){
   if (key === "heirs_min_1")      return HEIRS.length > 0;
-  if (key === "ownership_total")  return ownershipBalanced();
   if (key === "heirs_contactable")return HEIRS.some(h => h.owner === "Yes" && (h.p1 || h.addr));
   if (key === "heirs_mapped")     return owners().length > 0 &&
                                     owners().every(h => h.name && h.rel && h.addr && h.p1);
@@ -990,19 +969,57 @@ function hasValue(key){
   return !!(DATA[key] && String(DATA[key]).trim());
 }
 
-function linkChip(k){
+/* "$11,480" -> 11480, so threshold rules can read the typed values */
+function money(v){
+  const n = parseFloat(String(v ?? "").replace(/[^0-9.]/g, ""));
+  return isNaN(n) ? null : n;
+}
+const lowTaxBill = v => { const n = money(v); return n !== null && n <= 2500; };
+const lowEquity  = v => { const n = money(v); return n !== null && n <= 130000; };
+
+const ICON_OPEN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5"/></svg>`;
+const ICON_CLIP = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>`;
+
+/* The chain button — attaches or changes a URL */
+function linkEditBtn(k){
   const l = LINKS[k];
-  const has = !!(l && l.url);
-  return `<button class="linkChip ${has ? 'has' : ''}" type="button" data-linkfield="${k}"
-    title="${has ? 'Open or replace' : 'Attach'} the ${esc(l.label)} link">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/>
-      <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>
-    </svg>
-  </button>`;
+  if (!l) return "";
+  return `<button class="linkEdit" type="button" data-linkfield="${k}" title="${l.url ? 'Change' : 'Attach'} the ${esc(l.label)} link">${ICON_CLIP}</button>`;
 }
 
+/* Attached -> a text link that opens in one click, plus a hover-only chain
+   button to change it.  Missing -> a quiet "add" text button. */
+function linkChip(k){
+  const l = LINKS[k];
+  if (!l) return "";
+  if (l.url){
+    return `<span class="linkPair">
+      <button class="linkOpen" type="button" data-openlink="${k}" title="Open the ${esc(l.label)} link">Open${ICON_OPEN}</button>
+      ${linkEditBtn(k)}
+    </span>`;
+  }
+  return `<button class="linkAdd" type="button" data-linkfield="${k}" title="Attach the ${esc(l.label)} link">${ICON_CLIP}${esc(l.label)}</button>`;
+}
+
+const FLAG = `<svg class="flagIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5z" fill="currentColor" stroke="none"/><path d="M5 4h11l-2 4 2 4H5z"/></svg>`;
+
 const PENCIL = `<span class="edit" title="Edit"><svg viewBox="0 0 24 24" fill="none"><path d="M12 20h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
+
+/* Renders a source link as its own field row. "Click Here" opens it outright. */
+function linkFieldRow(linkKey, label, opts){
+  opts = opts || {};
+  const l = LINKS[linkKey];
+  const has = !!(l && l.url);
+  return `<div class="slds-field" data-field="${linkKey}">
+    <div class="slds-label">${esc(label)}${opts.required && !has ? '<span class="reqDot" title="Required to advance"></span>' : ''}</div>
+    <div class="slds-value">
+      ${has
+        ? `<span class="value-text link" data-openlink="${linkKey}">Click Here</span>
+           <button class="linkEdit" type="button" data-linkfield="${linkKey}" title="Change the ${esc(l.label)} link">${ICON_CLIP}</button>`
+        : `<span class="value-text empty">${esc(opts.placeholder || "Attach link")}</span>${linkChip(linkKey)}`}
+    </div>
+  </div>`;
+}
 
 /* Renders one editable SLDS field row */
 function fieldRow(key, label, opts){
@@ -1010,16 +1027,26 @@ function fieldRow(key, label, opts){
   const v = DATA[key];
   const filled = !!(v && String(v).trim());
   const required = opts.required;
-  const linkKey = opts.linkField;
+  const linkKeys = opts.linkFields || (opts.linkField ? [opts.linkField] : []);
+  const linkKey = linkKeys[0];
   const linkable = linkKey && LINKS[linkKey] && LINKS[linkKey].url;
   const cls = ["value-text"];
   if (!filled) cls.push("empty");
-  if (linkable) cls.push("link");
   if (opts.multiline) cls.push("multiline");
+  if (filled && opts.flag && opts.flag(v)) cls.push("flag");
+  const flagged = filled && opts.flag && opts.flag(v);
   const shown = filled ? esc(v) : (opts.placeholder || "Add value");
-  const head = `<div class="slds-label">${esc(label)}${required && !filled ? '<span class="reqDot" title="Required to advance"></span>' : ''}</div>`;
+  /* When a row carries a required link too, the dot stays until both halves are done */
+  const needsDot = required && (!filled || (opts.linkRequired && !linkable));
+  const head = `<div class="slds-label">${esc(label)}${needsDot ? '<span class="reqDot" title="Required to advance"></span>' : ''}</div>`;
 
-  const chip = linkKey ? linkChip(linkKey) : "";
+  /* On a plain text row the value doubles as the link, so the only control
+     needed is the chain button. Dropdown rows keep the separate open button
+     because their value is the picklist trigger. */
+  const isPick = !!PICKLISTS[key];
+  const valueOpens = !isPick && linkable && linkKeys.length === 1;
+  if (valueOpens) cls.push("link");
+  const chip = valueOpens ? linkEditBtn(linkKey) : linkKeys.map(linkChip).join("");
 
   if (PICKLISTS[key]){
     return `<div class="slds-field pickRow" data-field="${key}">
@@ -1028,10 +1055,16 @@ function fieldRow(key, label, opts){
     </div>`;
   }
 
+  const valueSpan =
+    `<span class="${cls.join(' ')}" data-editable="true"${valueOpens ? ` data-openlink="${linkKey}"` : ''}>${shown}</span>`;
+  const body = flagged
+    ? `<span class="valWrap">${valueSpan}${FLAG}</span>`
+    : valueSpan;
+
   return `<div class="slds-field" data-field="${key}">
     ${head}
     <div class="slds-value">
-      <span class="${cls.join(' ')}" data-editable="true"${linkable ? ` data-href="${esc(LINKS[linkKey].url)}"` : ''}>${shown}</span>
+      ${body}
       ${chip}${PENCIL}
     </div>
   </div>`;
@@ -1076,7 +1109,6 @@ function renderPath(){
 function renderGuidance(){
   const s = STAGES[currentStage];
   $("#guidStatusName").textContent = s.name;
-  $("#guidStageMeta").textContent = `${GROUPS[s.group]} · ${s.owner} · ${s.short}`;
 
   const bb = $("#blockBanner");
   if (blocked){
@@ -1108,12 +1140,25 @@ function renderGuidance(){
        ${note ? `<span class="reqNote">${esc(note)}</span>` : ''}
      </div>`;
 
-  $("#reqGrid").innerHTML =
-    s.requires.map(k => row(k, hasValue(k) ? 'met' : 'unmet')).join("") +
-    conds.map(c => c.active
+  const rows = s.requires.map(k => row(k, hasValue(k) ? 'met' : 'unmet'))
+    .concat(conds.map(c => c.active
       ? row(c.key, hasValue(c.key) ? 'met' : 'unmet', c.why)
       : row(c.key, 'na', c.na)
-    ).join("");
+    ));
+
+  /* Long lists break into two columns instead of one endless run.
+     COL_BREAK = 5 puts the break right after Tax Lawsuit Status on Records Pulling. */
+  const COL_BREAK = 5;
+  const grid = $("#reqGrid");
+  if (rows.length > 6){
+    grid.classList.add("split");
+    grid.innerHTML =
+      `<div class="reqCol">${rows.slice(0, COL_BREAK).join("")}</div>` +
+      `<div class="reqCol">${rows.slice(COL_BREAK).join("")}</div>`;
+  } else {
+    grid.classList.remove("split");
+    grid.innerHTML = rows.join("");
+  }
 
   $("#guidFootNote").textContent = unmet.length === 0
     ? "All requirements met for this status."
@@ -1132,11 +1177,8 @@ function renderReminders(){
   const items = s.reminders.slice();
 
   // Data-driven reminders layered on top of the stage's hardcoded ones
-  if (!hasValue("will_link") && DATA.will_status === "No Will Found"){
-    items.push({ type:"info", title:"No will on file", body:"Intestate succession applies. Heir order is set by statute — confirm the state's order before ranking heirs." });
-  }
-  if (DATA.probate_status === "Not Filed"){
-    items.push({ type:"warn", title:"Probate not filed", body:"Nobody has legal authority to sell yet. Sales needs to know an heir must open probate first." });
+  if (DATA.probate_status === "No Open Cases"){
+    items.push({ type:"warn", title:"No probate on file", body:"Texas intestate succession applies and nobody has legal authority to sell yet. Heir order is set by statute — sales needs to know an heir must open probate first." });
   }
   if (DATA.occupancy === "Vacant"){
     items.push({ type:"warn", title:"Vacant property", body:"Check for code violations and confirm the structure is still standing before verification." });
@@ -1144,9 +1186,6 @@ function renderReminders(){
   if (HEIRS.some(h => h.owner === "Yes" && !h.p1 && !h.addr)){
     const n = HEIRS.filter(h => h.owner === "Yes" && !h.p1 && !h.addr).length;
     items.push({ type:"info", title:`${n} heir${n>1?'s':''} with no contact method`, body:"Skip trace is incomplete until every non-excluded heir has a phone or a deliverable address." });
-  }
-  if (!hasValue("fact_pattern_notes")){
-    items.push({ type:"info", title:"Fact pattern notes empty", body:"Sales reads this first. It is required before handoff." });
   }
 
   const icons = {
@@ -1165,38 +1204,35 @@ function renderReminders(){
    RENDER: FIELDS
    ══════════════════════════════════════════════════════════ */
 function renderFields(){
+  /* ABOUT — where the property is. Location identity only. */
   $("#aboutFields").innerHTML =
     fieldRow("property_address","Property Address",{required:true, linkField:"maps_link"}) +
     fieldRow("city","City",{required:true}) +
     fieldRow("zip","ZIP Code",{required:true}) +
     fieldRow("county","County",{required:true}) +
-    fieldRow("ownership_type","Ownership Type",{required:true, placeholder:"Sole or joint owned"}) +
-    fieldRow("deceased_owner","Deceased Owner",{required:true}) +
-    fieldRow("date_of_birth","Date of Birth") +
-    fieldRow("date_of_death","Date of Death") +
-    fieldRow("age_at_death","Age at Death") +
     fieldRow("date_added","Date Added");
 
+  /* PROPERTY PROFILE — what the property is worth and what shape it is in. */
   $("#propertyFields").innerHTML =
-    fieldRow("est_value","Estimated Value",{linkField:"zillow_link"}) +
-    fieldRow("equity","Estimated Equity") +
-    fieldRow("taxes_owed","Taxes Owed",{linkField:"tax_assessor_link"}) +
+    fieldRow("equity","Estimated Equity",{linkField:"zillow_link", flag:lowEquity}) +
+    fieldRow("taxes_owed","Taxes Owed",{linkField:"tax_assessor_link", flag:lowTaxBill}) +
+    fieldRow("tax_status","Tax Status",{required:true}) +
     fieldRow("condition","Condition") +
     fieldRow("occupancy","Occupancy") +
-    fieldRow("title_issue","Title Issue",{placeholder:"None noted"});
+    fieldRow("title_issue","Title Issues",{placeholder:"None noted"});
 
+  /* DUE DILIGENCE PHASE 2 — everything the VA is responsible for filling in. */
   $("#infoFields").innerHTML =
-    fieldRow("deed_status","Deed Status",{required:true, linkField:"deed_link"}) +
-    fieldRow("will_status","Will Status",{required:true, linkField:"will_link"}) +
-    fieldRow("probate_status","Probate Status",{required:true, linkField:"probate_link"}) +
-    fieldRow("ancestry_status","Ancestry Status",{linkField:"ancestry_link"}) +
-    fieldRow("obituary_status","Obituary Status",{linkField:"obituary_link"}) +
-    fieldRow("deed_recorded","Deed Recorded Date") +
-    fieldRow("probate_case_no","Probate Case Number",{placeholder:"Only if a case exists"}) +
-    fieldRow("tax_lawsuit_status","Tax Lawsuit Status",{required:true, linkField:"lawsuit_link"}) +
+    fieldRow("deed_status","Deed Status & Link",{required:true, linkField:"deed_link", linkRequired:true}) +
+    fieldRow("probate_status","Probate Status & Will Link",{required:true, linkField:"will_link"}) +
+    fieldRow("tax_lawsuit_status","Lawsuit Status & Link",{required:true, linkField:"lawsuit_link"}) +
+    fieldRow("probate_case_no","Probate Case Number",{linkField:"probate_link", placeholder:"Only if a case exists"}) +
     fieldRow("lawsuit_case_no","Lawsuit Case Number",{placeholder:"Only if a suit exists"}) +
-    fieldRow("tax_status","Tax Status",{required:true, linkField:"tax_assessor_link"}) +
-    fieldRow("fact_pattern_notes","Fact Pattern Notes",{multiline:true, required:true, placeholder:"Who died, who inherits, what is wrong with the property, why they would sell"});
+    linkFieldRow("ancestry_link","Ancestry",{required:true}) +
+    linkFieldRow("obituary_link","Obituary",{required:true}) +
+    fieldRow("age_at_death","Age",{required:true}) +
+    fieldRow("date_of_birth","Birth Date",{required:true}) +
+    fieldRow("date_of_death","Death Date",{required:true});
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1236,35 +1272,8 @@ function renderHeirs(){
 
 
   { const hc = $("#heirCount"); if (hc) hc.textContent = HEIRS.length; }
-  renderTotals();
   const sh = $("#snapHeirs"); if (sh) sh.textContent = HEIRS.length + " identified";
 }
-
-/* ══════════════════════════════════════════════════════════
-   RENDER: OWNERSHIP TOTALS
-   ══════════════════════════════════════════════════════════ */
-function renderTotals(){
-  const el = $("#heirTotals");
-  if (!el) return;
-  const list = owners();
-  if (!list.length){
-    el.className = "heirTotals warn";
-    el.textContent = "No subitems marked Owner: Yes — ownership cannot be allocated yet.";
-    return;
-  }
-  const missing = list.filter(h => pctOf(h) === null).length;
-  const total = ownershipTotal();
-  const ok = ownershipBalanced();
-  const rounded = Math.round(total * 10) / 10;
-  el.className = "heirTotals " + (ok ? "ok" : "warn");
-  el.textContent = ok
-    ? `Ownership fully allocated — ${rounded}% across ${list.length} owner${list.length > 1 ? "s" : ""}. ` +
-      `(Anything within ${PCT_TOLERANCE}% of 100 counts, so 33.3 x 3 = 99.9 passes.)`
-    : missing
-      ? `${rounded}% allocated across ${list.length} owners — ${missing} owner${missing > 1 ? "s have" : " has"} no ownership % set.`
-      : `${rounded}% allocated across ${list.length} owners — ${Math.round(Math.abs(100 - total) * 10) / 10}% ${total > 100 ? "over" : "unallocated"}.`;
-}
-
 
 /* ══════════════════════════════════════════════════════════
    RENDER: SNAPSHOT + COMPLETENESS
@@ -1373,12 +1382,18 @@ document.addEventListener("click", e => {
   const valueEl = e.target.closest(".value-text");
 
   if (valueEl && valueEl.dataset.href && !pencil){
-    toast("Opening " + valueEl.dataset.href);
+    openLink(valueEl.dataset.href);
     return;
   }
-  if (!pencil) return;
+  /* A value that doubles as a link opens on click, so editing stays on the pencil */
+  if (valueEl && valueEl.dataset.openlink && !pencil) return;
 
-  const field = pencil.closest(".slds-field");
+  /* Otherwise the value itself is the edit target — the pencil is just a hint */
+  const trigger = pencil || (valueEl && valueEl.dataset.editable ? valueEl : null);
+  if (!trigger) return;
+
+  const field = trigger.closest(".slds-field");
+  if (!field) return;
   const key = field.dataset.field;
   if (!key) return;
   const holder = field.querySelector(".slds-value");
@@ -1403,9 +1418,21 @@ document.addEventListener("click", e => {
   box.addEventListener("blur", () => commit(true));
 });
 
-/* Attach / open a source link from its field row */
+/* One click on an attached link opens it — no editor in between */
+function openLink(url){
+  toast("Opening " + url);
+  try { window.open(url, "_blank", "noopener"); } catch (err) { /* sandboxed preview */ }
+}
 document.addEventListener("click", e => {
-  const chip = e.target.closest(".linkChip");
+  const opener = e.target.closest("[data-openlink]");
+  if (!opener) return;
+  const l = LINKS[opener.dataset.openlink];
+  if (l && l.url) openLink(l.url);
+});
+
+/* Attach / change a source link from its field row */
+document.addEventListener("click", e => {
+  const chip = e.target.closest("[data-linkfield]");
   if (!chip) return;
   const k = chip.dataset.linkfield;
   const l = LINKS[k];
