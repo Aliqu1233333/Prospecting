@@ -9,8 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg: #ffffff;
-  --card: #f6f7f8;
+  --bg: #f3f3f3;
+  --card: #ffffff;
   --surface: #ffffff;
   --line: #e5e7eb;
   --line-2: #dbe0e6;
@@ -37,14 +37,14 @@ body{
 }
 button{ font-family: var(--font); }
 
-.app{ width:100%; padding: 18px 24px 60px 24px; }
+.app{ width:100%; padding: 4px 24px 24px 24px; }
 .layout{ display:grid; grid-template-columns:1fr; gap:0; width:100%; }
 .panel{ background:transparent; border:0; border-radius:0; box-shadow:none; overflow:visible; }
 
 /* ---------- RECORD HEADER ---------- */
 .recHeader{
   display:flex; align-items:center; justify-content:space-between;
-  gap:16px; padding: 4px 4px 10px 4px; background:transparent; border:0;
+  gap:16px; padding: 0 4px 8px 4px; background:transparent; border:0;
 }
 .recIdent{ display:flex; align-items:center; gap:15px; min-width:0; }
 .recIcon{
@@ -87,7 +87,7 @@ button{ font-family: var(--font); }
 /* ---------- TABBED INFO CARD ---------- */
 .infoTabs{
   display:flex; gap:26px; padding:14px 24px 0 24px;
-  border-bottom:1px solid #e2e4e8; margin-bottom:0;
+  border-bottom:1px solid #ebedf0; margin-bottom:0;
 }
 .itab{
   appearance:none; border:0; background:transparent; font-family:var(--font);
@@ -106,11 +106,11 @@ button{ font-family: var(--font); }
   display:flex; align-items:center; gap:9px;
   width:calc(100% - 48px); margin:16px 24px 0 24px;
   padding:10px 14px; border:0; border-radius:10px; cursor:pointer;
-  background:#eceef0; font-family:var(--font); font-size:15px;
+  background:#f7f8f9; font-family:var(--font); font-size:15px;
   font-weight:400; color:#181818; text-align:left;
   transition:background .12s ease;
 }
-.secHead:hover{ background:#e4e6e9; }
+.secHead:hover{ background:#f1f3f5; }
 .secHead svg{ width:18px; height:18px; color:#706e6b; flex:0 0 auto; transition:transform .18s ease; }
 .secHead.collapsed svg{ transform:rotate(-90deg); }
 .secMeta{ margin-left:auto; display:flex; align-items:center; gap:9px; }
@@ -124,7 +124,7 @@ button{ font-family: var(--font); }
 .infoGrid .infoSpan{ grid-column:1 / -1; }
 
 /* ---------- SUBITEM FORM / TOTALS / LINK CHIP ---------- */
-.subForm{ margin:14px 24px 0 24px; padding:16px 18px; border-radius:12px; background:#eceef0; }
+.subForm{ margin:14px 24px 0 24px; padding:16px 18px; border-radius:12px; background:#f7f8f9; }
 .subForm[hidden]{ display:none; }
 .subFormHead{ font-size:14px; color:#181818; margin-bottom:12px; }
 .subFormGrid{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px 16px; }
@@ -215,7 +215,7 @@ button{ font-family: var(--font); }
 }
 .pickHead{
   font-size:13px; font-weight:500; color:#0b5cab;
-  padding:12px 16px 10px 16px; border-bottom:1px solid #e2e4e8; margin-bottom:4px;
+  padding:12px 16px 10px 16px; border-bottom:1px solid #ebedf0; margin-bottom:4px;
   position:sticky; top:0; background:#fff;
 }
 .pickOpt{
@@ -313,9 +313,9 @@ button{ font-family: var(--font); }
 /* ---------- SLDS FIELD ROWS ---------- */
 .slds-field{
   display:flex; flex-direction:column; padding:10px 0 4px 0;
-  border-bottom:1px solid #e2e4e8; min-width:0;
+  border-bottom:1px solid #ebedf0; min-width:0;
 }
-.slds-field:last-child{ border-bottom:1px solid #e2e4e8; }
+.slds-field:last-child{ border-bottom:1px solid #ebedf0; }
 .slds-label{
   font-size:12px; font-weight:400; color:#2e333d; line-height:1.3;
   margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
@@ -478,16 +478,16 @@ button{ font-family: var(--font); }
   table-layout:auto; white-space:nowrap;
 }
 .rct-table thead th{
-  background:#eceef0; color:#444; font-weight:500; font-size:13px;
+  background:#f3f3f3; color:#444; font-weight:500; font-size:13px;
   text-align:left; padding:0 12px; height:34px;
-  border-bottom:1px solid #dfe1e4; border-top:1px solid #dfe1e4;
+  border-bottom:1px solid #e5e5e5; border-top:1px solid #e5e5e5;
 }
 .rct-table tbody td{
-  padding:0 12px; height:46px; border-bottom:1px solid #dfe1e4;
-  vertical-align:middle; background:transparent; transition:background .08s;
+  padding:0 12px; height:46px; border-bottom:1px solid #e5e5e5;
+  vertical-align:middle; background:#fff; transition:background .08s;
 }
 .rct-row{ cursor:pointer; }
-.rct-row:hover td{ background:#ecedef; }
+.rct-row:hover td{ background:#f3f3f3; }
 .rct-link{ color:var(--blue); text-decoration:none; }
 .rct-row:hover .rct-link{ text-decoration:underline; }
 
